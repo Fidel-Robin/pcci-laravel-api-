@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Post;
 
 class PostController extends Controller
 {
@@ -12,11 +13,13 @@ class PostController extends Controller
      */
     public function index()
     {
-        return [
-            'id'=> 21,
-            'title'=> "title test",
-            'body'=>"body testss"
-        ];
+        return Post::all();
+
+        // return [
+        //     'id'=> 21,
+        //     'title'=> "title test",
+        //     'body'=>"body testss"
+        // ];
     }
 
     /**
@@ -24,13 +27,18 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        // $data = $request->all();
-        $data = $request->only( 'id', 'title', 'body');
-        return response()->json([
-            'id' => 1,
-            'title' => $data['title'],
-            'body' => $data['body']
-        ], 201);
+        $data = $request ->validate([
+            'title' => 'required|string|min:2',
+            'body' => ['required', 'string', 'min:2']
+        ]);
+
+        // return $data;
+
+        $data ['author_id'] = 3;
+
+        $post = Post::create($data);
+
+        return response()->json($post, 201);
     }
 
     /**
