@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Post extends Model
 {
@@ -11,4 +12,9 @@ class Post extends Model
         'body',
         'author_id'
     ];  
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'author_id'); 
+    }
 }
