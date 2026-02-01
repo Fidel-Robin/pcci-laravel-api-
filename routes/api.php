@@ -4,7 +4,8 @@ use App\Http\Controllers\Api\V1\PostController as PostController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Resources\PostResource;
+use App\Models\Post;
 
 
 
@@ -14,6 +15,11 @@ use Illuminate\Support\Facades\Route;
 //         'time' => now()
 //     ]);
 // });
+
+Route::get('/post', function () {
+    return response()->json(Post::all());
+});
+
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
 
