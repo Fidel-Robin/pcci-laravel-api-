@@ -25,16 +25,17 @@ class StoreApplicantRequest extends FormRequest
 
             //===FOR PCCI USE ONLY (Upper Right)===
             'date_submitted'            => 'required|date',
+            'status'         => 'in:pending,approved,rejected',
             'date_approved'             => 'nullable|date',
             'membership_type'           => 'required|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate',
 
             // ===PHOTO===
-            'photo'                     => 'required|image|mimes:jpg,jpeg,png|max:2048', // Passport Size
+            'photo'                     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
             // ===BASIC PROFILE===
-            'applicant_first_name'      => 'required|string|max:255',
-            'applicant_middle_name'     => 'required|string|max:255',
-            'applicant_surname'         => 'required|string|max:255',
+            'first_name'      => 'required|string|max:255',
+            'middle_name'     => 'required|string|max:255',
+            'surname'         => 'required|string|max:255',
             'trade_name'                => 'nullable|string|max:255',
             //in place of business address
             'business_house_number'     => 'nullable|string|max:100',
@@ -48,7 +49,7 @@ class StoreApplicantRequest extends FormRequest
             'zip_code'                  => 'required|string|max:10',
             'telephone_no'              => 'required|string|max:25',
             'website'                   => 'nullable|url|max:255',
-            'applicant_dob'             => 'required|date',
+            'dob'             => 'required|date',
             'email'                     => 'required|email|unique:applicants,email',
             'tin_no'                    => 'required|string|max:20',
 
@@ -95,9 +96,9 @@ class StoreApplicantRequest extends FormRequest
             // 'certification_date'        => 'nullable|date',
 
             // ===FOR PCCI-VALENZUELA CITY USE ONLY===
-            'referred_by'=> 'nullable|string|max:255',
+            'referred_by'=> 'nullable|string|max:255',  //to be filled up by the applicant
             'recommending_approval' => 'nullable|string|max:255', //this is the user admin who approved the applicant
-            'approved_by' => 'nullable|string|max:255', //this is the president who will approved the applicant (final approval)
+            // 'approved_by' => 'nullable|string|max:255', //this is the president who will approved the applicant (final approval) == do not include for now
         ];
     }
 }

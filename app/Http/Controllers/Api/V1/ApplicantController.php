@@ -29,6 +29,7 @@ class ApplicantController extends Controller
         return new ApplicantResource($applicant);
     }
 
+
     /**
      * Display the specified resource.
      */
@@ -46,7 +47,7 @@ class ApplicantController extends Controller
     public function update(Request $request, Applicant $applicant)
     {
         $data = $request -> validate([
-            'applicant_status' => 'required|in:pending,approved,rejected',
+            'status' => 'required|in:pending,approved,rejected',
         ]);
         $applicant->update($data);
         return new ApplicantResource($applicant);
