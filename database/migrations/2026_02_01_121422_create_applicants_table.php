@@ -24,9 +24,7 @@ return new class extends Migration
             $table->string('photo')->nullable(); // Stores the file path
 
             // === BASIC PROFILE ===
-            $table->string('first_name');
-            $table->string('middle_name');
-            $table->string('surname');
+            $table->string('registered_business_name');
             $table->string('trade_name')->nullable();
             
             // Address Breakdown

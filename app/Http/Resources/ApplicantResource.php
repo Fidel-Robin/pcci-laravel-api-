@@ -28,9 +28,7 @@ class ApplicantResource extends JsonResource
 
             /// === BASIC PROFILE (Including Address) ===
             'basic_profile' => [
-                'first_name'            => $this->first_name,
-                'middle_name'           => $this->middle_name,
-                'surname'               => $this->surname,
+                'registered_business_name' => $this->registered_business_name,
                 'trade_name'            => $this->trade_name,
                 
                 // Nested Address following the order of rules

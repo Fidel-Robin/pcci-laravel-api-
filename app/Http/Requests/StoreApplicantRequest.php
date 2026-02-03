@@ -33,9 +33,7 @@ class StoreApplicantRequest extends FormRequest
             'photo'                     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
             // ===BASIC PROFILE===
-            'first_name'                => 'required|string|max:255',
-            'middle_name'               => 'required|string|max:255',
-            'surname'                   => 'required|string|max:255',
+            'registered_business_name'  => 'required|string|max:255',
             'trade_name'                => 'nullable|string|max:255',
             //in place of business address
             'business_house_number'     => 'nullable|string|max:100',

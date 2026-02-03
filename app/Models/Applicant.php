@@ -19,9 +19,7 @@ class Applicant extends Model
         'photo', 
 
         // === BASIC PROFILE ===
-        'first_name',
-        'middle_name',
-        'surname',
+        'registered_business_name',
         'trade_name',
         'business_house_number',
         'business_street',

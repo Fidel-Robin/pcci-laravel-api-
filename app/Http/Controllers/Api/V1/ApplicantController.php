@@ -30,8 +30,7 @@ class ApplicantController extends Controller
         // Server-controlled fields
         $data['date_submitted'] = now();
         $data['status'] = 'pending';
-        $data['date_approved'] = now();
-        // $data['membership_type'] = 'NULL BA';
+        // $data['date_approved'] = now();
 
         $applicant = Applicant::create($data);
 
@@ -57,7 +56,18 @@ class ApplicantController extends Controller
     {
         $data = $request -> validate([
             'status' => 'required|in:pending,approved,rejected',
+            'membership_type' => 'required|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate', 
         ]);
+
+        // 🔒 Protect only status: do not allow changing if already approved
+        if ($applicant->status === 'approved') {
+            unset($data['status']); // ignore client input for status
+        }
+
+        if (isset($data['status']) && $data['status'] === 'approved') {
+            $data['date_approved'] = now();
+        }
+        
         $applicant->update($data);
         return new ApplicantResource($applicant);
     }
