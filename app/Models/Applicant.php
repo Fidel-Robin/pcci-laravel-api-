@@ -9,14 +9,14 @@ class Applicant extends Model
     protected $table = 'applicants';
 
     protected $fillable = [
-        // === PCCI USE ONLY ===
+        // === FOR PCCI USE ONLY ===
         'date_submitted',
         'status',
         'date_approved',
         'membership_type',
 
         // === PHOTO ===
-        'photo', 
+        'photo',
 
         // === BASIC PROFILE ===
         'registered_business_name',
@@ -27,60 +27,48 @@ class Applicant extends Model
         'region',
         'zip_code',
         'telephone_no',
-        'website',
+        'website_socmed',
         'member_dob',
         'email',
         'tin_no',
 
-        // === OFFICIAL REPRESENTATIVE ===
-        'rep_title',
+        // === OFFICIAL REPRESENTATIVE TO PCCI ===
         'rep_first_name',
-        'rep_mi',
+        'rep_mid_name',
         'rep_surname',
         'rep_designation',
         'rep_dob',
         'rep_contact_no',
-        'rep_signature_path',
 
         // === ALTERNATE REPRESENTATIVE ===
-        'alt_rep_title',
         'alt_first_name',
-        'alt_mi',
+        'alt_mid_name',
         'alt_surname',
         'alt_designation',
         'alt_dob',
         'alt_contact_no',
-        'alt_signature_path',
 
-        // === OTHER ORGANIZATIONS ===
-        'other_organizations',
-
-        // === FORM OF ORGANIZATION & SIZE ===
-        'form_of_organization',
-        'registration_type',
+        // === MEMBERSHIP IN OTHER BUSINESS ORGANIZATION ===
+        'name_of_organization',
         'registration_number',
         'date_of_registration',
         'type_of_company',
         'number_of_employees',
         'year_established',
 
-        // === BUSINESS LINE ===
-        'business_line',
-
-        // === INTERNAL TRACKING ===
-        'referred_by',
+        // === FOR PCCI-VALENZUELA CITY USE ONLY ===
         'recommending_approval',
     ];
 
     /**
-     * The model's default values for attributes.
+     * Default attribute values
      */
     protected $attributes = [
         'status' => 'pending',
     ];
 
     /**
-     * If you want to treat dates as Carbon objects automatically
+     * Attribute casting
      */
     protected $casts = [
         'member_dob' => 'date',
@@ -89,5 +77,7 @@ class Applicant extends Model
         'date_submitted' => 'date',
         'date_approved' => 'date',
         'date_of_registration' => 'date',
+        'number_of_employees' => 'integer',
+        'year_established' => 'integer',
     ];
 }
