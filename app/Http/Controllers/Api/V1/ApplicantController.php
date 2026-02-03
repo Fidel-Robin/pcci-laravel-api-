@@ -25,7 +25,16 @@ class ApplicantController extends Controller
      // Submit personal details
     public function store(StoreApplicantRequest $request)
     {
-        $applicant = Applicant::create($request->validated());
+        $data = $request->validated();
+
+        // Server-controlled fields
+        $data['date_submitted'] = now();
+        $data['status'] = 'pending';
+        $data['date_approved'] = now();
+        // $data['membership_type'] = 'NULL BA';
+
+        $applicant = Applicant::create($data);
+
         return new ApplicantResource($applicant);
     }
 

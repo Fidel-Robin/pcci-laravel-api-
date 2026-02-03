@@ -24,18 +24,18 @@ class StoreApplicantRequest extends FormRequest
         return [
 
             //===FOR PCCI USE ONLY (Upper Right)===
-            'date_submitted'            => 'required|date',
-            'status'         => 'in:pending,approved,rejected',
-            'date_approved'             => 'nullable|date',
-            'membership_type'           => 'required|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate',
+            'date_submitted'            => 'nullable|date',     //server controlled
+            'status'         => 'in:pending,approved,rejected', //server controlled
+            'date_approved'             => 'nullable|date',     //server controlled
+            'membership_type'           => 'nullable|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate',  //set by the admin  
 
             // ===PHOTO===
             'photo'                     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
             // ===BASIC PROFILE===
-            'first_name'      => 'required|string|max:255',
-            'middle_name'     => 'required|string|max:255',
-            'surname'         => 'required|string|max:255',
+            'first_name'                => 'required|string|max:255',
+            'middle_name'               => 'required|string|max:255',
+            'surname'                   => 'required|string|max:255',
             'trade_name'                => 'nullable|string|max:255',
             //in place of business address
             'business_house_number'     => 'nullable|string|max:100',
@@ -49,7 +49,7 @@ class StoreApplicantRequest extends FormRequest
             'zip_code'                  => 'required|string|max:10',
             'telephone_no'              => 'required|string|max:25',
             'website'                   => 'nullable|url|max:255',
-            'dob'             => 'required|date',
+            'dob'                       => 'required|date',
             'email'                     => 'required|email|unique:applicants,email',
             'tin_no'                    => 'required|string|max:20',
 

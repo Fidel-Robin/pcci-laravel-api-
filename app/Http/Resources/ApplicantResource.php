@@ -20,8 +20,8 @@ class ApplicantResource extends JsonResource
             //===FOR PCCI USE ONLY (Upper Right)===
             'date_submitted'    => $this->date_submitted?->toDateString(),
             'status'  => $this->status,
-            'date_approved'     => $this->date_approved?->toDateString(),
-            'membership_type'   => $this->membership_type,
+            'date_approved'     => $this->date_approved?->toDateString() ?? null,
+            'membership_type'   => $this->membership_type ?? null,
 
             // PHOTO
             'photo_url'         => $this->photo ? asset('storage/' . $this->photo) : null,

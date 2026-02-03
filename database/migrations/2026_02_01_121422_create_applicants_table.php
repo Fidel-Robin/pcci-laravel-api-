@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
 
             // === FOR PCCI USE ONLY (Upper Right) ===
-            $table->date('date_submitted');
+            $table->date('date_submitted')->nullable();;
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->date('date_approved')->nullable();
-            $table->string('membership_type');
+            $table->string('membership_type')->nullable();
 
             // === PHOTO ===
             $table->string('photo')->nullable(); // Stores the file path
