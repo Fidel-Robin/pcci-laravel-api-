@@ -32,11 +32,8 @@ class ApplicantResource extends JsonResource
                 'trade_name'            => $this->trade_name,
                 
                 // Nested Address following the order of rules
-                'business_address' => [
-                    'house_number'      => $this->business_house_number,
-                    'street'            => $this->business_street,
-                    'subdivision'       => $this->business_subdivision,
-                    'barangay'          => $this->business_barangay,
+                'business_location' => [
+                    'business_address'  => $this->business_address,
                     'city_municipality' => $this->city_municipality,
                     'province'          => $this->province,
                     'region'            => $this->region,
@@ -45,7 +42,7 @@ class ApplicantResource extends JsonResource
                 
                 'telephone_no'          => $this->telephone_no,
                 'website'               => $this->website,
-                'dob'                   => $this->dob?->toDateString(),
+                'member_dob'            => $this->member_dob?->toDateString(),
                 'email'                 => $this->email,
                 'tin_no'                => $this->tin_no,
             ],

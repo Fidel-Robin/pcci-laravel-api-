@@ -36,18 +36,19 @@ class StoreApplicantRequest extends FormRequest
             'registered_business_name'  => 'required|string|max:255',
             'trade_name'                => 'nullable|string|max:255',
             //in place of business address
-            'business_house_number'     => 'nullable|string|max:100',
-            'business_street'           => 'nullable|string|max:255',
-            'business_subdivision'      => 'nullable|string|max:255',
-            'business_barangay'         => 'required|string|max:255',
-            // house number, street, subdivision, barangay
+            // 'business_house_number'     => 'nullable|string|max:100',
+            // 'business_street'           => 'nullable|string|max:255',
+            // 'business_subdivision'      => 'nullable|string|max:255',
+            // 'business_barangay'         => 'required|string|max:255',
+
+            'business_address'         => 'required|string|max:255',
             'city_municipality'         => 'required|string|max:255',
             'province'                  => 'required|string|max:255',
             'region'                    => 'required|string|max:255',
             'zip_code'                  => 'required|string|max:10',
             'telephone_no'              => 'required|string|max:25',
             'website'                   => 'nullable|url|max:255',
-            'dob'                       => 'required|date',
+            'member_dob'               => 'required|date', //this is for review
             'email'                     => 'required|email|unique:applicants,email',
             'tin_no'                    => 'required|string|max:20',
 

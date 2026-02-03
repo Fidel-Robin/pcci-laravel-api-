@@ -21,17 +21,14 @@ class Applicant extends Model
         // === BASIC PROFILE ===
         'registered_business_name',
         'trade_name',
-        'business_house_number',
-        'business_street',
-        'business_subdivision',
-        'business_barangay',
+        'business_address',
         'city_municipality',
         'province',
         'region',
         'zip_code',
         'telephone_no',
         'website',
-        'dob',
+        'member_dob',
         'email',
         'tin_no',
 
@@ -86,7 +83,7 @@ class Applicant extends Model
      * If you want to treat dates as Carbon objects automatically
      */
     protected $casts = [
-        'dob' => 'date',
+        'member_dob' => 'date',
         'rep_dob' => 'date',
         'alt_dob' => 'date',
         'date_submitted' => 'date',

@@ -28,10 +28,7 @@ return new class extends Migration
             $table->string('trade_name')->nullable();
             
             // Address Breakdown
-            $table->string('business_house_number')->nullable();
-            $table->string('business_street')->nullable();
-            $table->string('business_subdivision')->nullable();
-            $table->string('business_barangay');
+            $table->string('business_address');
             $table->string('city_municipality');
             $table->string('province');
             $table->string('region');
@@ -39,7 +36,7 @@ return new class extends Migration
             
             $table->string('telephone_no');
             $table->string('website')->nullable();
-            $table->date('dob');
+            $table->date('member_dob');
             $table->string('email')->unique();
             $table->string('tin_no');
 
