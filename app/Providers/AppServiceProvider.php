@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 
+use App\Models\Applicant;
+use App\Observers\ApplicantObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(60)
                 ->by($request->user()?->id ?: $request->ip());
         });
+
+        Applicant::observe(ApplicantObserver::class);
 
     }
 }

@@ -39,4 +39,13 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
 });
 
 
+// use Illuminate\Support\Facades\Mail;
+// use App\Mail\ApplicantApproved;
+
+// Route::get('/test-email', function() {
+//     $dummy = (object) ['first_name' => 'Test', 'email' => 'fidelrevo@gmail.com'];
+//     Mail::to($dummy->email)->send(new ApplicantApproved($dummy));
+//     return 'Email sent!';
+// });
+
 require __DIR__.'/auth.php';
