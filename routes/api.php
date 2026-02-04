@@ -10,36 +10,23 @@ use App\Http\Controllers\Api\V1\ApplicantController;
 use App\Models\Applicant;
 
 
-// Route::get('/test', function() {
-//     return response()->json([
-//         'status' => 'API working',
-//         'time' => now()
-//     ]);
-// });
-
-// Route::get('/post', function () {
-//     return response()->json(Post::all());
-// });
-
-
-
-// Public route: applicant applies
+// Public route: applicant applies (anyone can submit)
 Route::post('/v1/apply', [ApplicantController::class, 'store']);
 
-
+// Public route: view all applicants (temporary - you may want to protect this later)
 Route::get('/v1/applicants_pub', [ApplicantController::class, 'index']);
 
 
-Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
-
+// Protected routes: only super_admin can access
+Route::middleware(['auth:sanctum', 'throttle:api', 'super_admin'])->group(function(){
     Route::prefix('v1')->group(function(){
+        // All CRUD operations require super_admin role
         Route::apiResource('applicants', ApplicantController::class);
     });
-
 });
 
 
-//routes for posts
+// Routes for posts (keeping as is, not implementing RBAC for posts per your request)
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
 
     Route::get('/user', function (Request $request) {
@@ -52,7 +39,4 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
 });
 
 
-
 require __DIR__.'/auth.php';
-
-
