@@ -2,34 +2,35 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
 class RoleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Reset cached roles and permissions
+        // Clear cached roles/permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions for applicants
-        Permission::create(['name' => 'view applicants']);
-        Permission::create(['name' => 'create applicants']);
-        Permission::create(['name' => 'edit applicants']);
-        Permission::create(['name' => 'delete applicants']);
+        // Permissions
+        Permission::firstOrCreate(['name' => 'view applicants']);
+        Permission::firstOrCreate(['name' => 'create applicants']);
+        Permission::firstOrCreate(['name' => 'edit applicants']);
+        Permission::firstOrCreate(['name' => 'delete applicants']);
 
-        // Create super_admin role and assign all permissions
-        $role = Role::create(['name' => 'super_admin']);
-        $role->givePermissionTo([
+        // Roles
+        $superAdmin = Role::firstOrCreate(['name' => 'super_admin']);
+        $superAdmin->givePermissionTo([
             'view applicants',
             'create applicants',
             'edit applicants',
             'delete applicants'
         ]);
+
+        Role::firstOrCreate(['name' => 'admin']);
+        Role::firstOrCreate(['name' => 'treasurer']);
+        Role::firstOrCreate(['name' => 'data_encoder']);
+        Role::firstOrCreate(['name' => 'member']);
     }
 }

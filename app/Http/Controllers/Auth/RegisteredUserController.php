@@ -18,24 +18,33 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): Response
+    public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+         $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|confirmed|min:8',
+            'role' => 'required|string|exists:roles,name', // validate role exists in roles table
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
+            'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
-
+         // Assign the role
+        $user->assignRole($request->role);
+        
+        // event(new Registered($user));
         // Auth::login($user);
 
-        return response()->noContent();
-    }
+        // return response()->noContent(201);
+
+        return response()->json([
+            'message' => 'User created successfully',
+            'user' => $user,
+            'role'=> $request->role,
+        ], 201);
+    }   
 }

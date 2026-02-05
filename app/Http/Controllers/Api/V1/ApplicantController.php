@@ -13,7 +13,7 @@ class ApplicantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // Show all applicants (for registered users)
+    // Show all applicants (for super_admin only)
     public function index()
     {
         return ApplicantResource::collection(Applicant::all());

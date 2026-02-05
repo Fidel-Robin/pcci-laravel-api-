@@ -8,8 +8,9 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+
 Route::post('/register', [RegisteredUserController::class, 'store'])
-    ->middleware('guest')
+    ->middleware(['auth:sanctum', 'role:super_admin'])
     ->name('register');
 
 Route::post('/login', [LoginController::class, 'store'])

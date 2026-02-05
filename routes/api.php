@@ -17,7 +17,7 @@ Route::post('/v1/apply', [ApplicantController::class, 'store']);
 Route::get('/v1/applicants_pub', [ApplicantController::class, 'index']);
 
 
-// Protected routes: only super_admin can access
+// Protected routes: only super_admin can access applicants
 Route::middleware(['auth:sanctum', 'throttle:api', 'super_admin'])->group(function(){
     Route::prefix('v1')->group(function(){
         // All CRUD operations require super_admin role
