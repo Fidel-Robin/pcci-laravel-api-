@@ -13,11 +13,33 @@ class ApplicantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // Show all applicants (for super_admin only)
     public function index()
     {
-        return ApplicantResource::collection(Applicant::all());
+        $user = request()->user();
+
+        // Super_admin & admin → get all applicants
+        if ($user->hasAnyRole(['super_admin', 'admin'])) {
+            $applicants = Applicant::all();
+        }
+
+        // Treasurer → only approved applicants
+        elseif ($user->hasRole('treasurer')) {
+            $applicants = Applicant::where('status', 'approved')->get();
+        }
+
+        else {
+            // default: empty collection
+            $applicants = collect();
+        }
+
+        return ApplicantResource::collection($applicants);
     }
+    // Show all applicants (for super_admin only)
+    // public function index()
+    // {
+    //     return ApplicantResource::collection(Applicant::all());
+    // }
+
 
     /**
      * Store a newly created resource in storage.
