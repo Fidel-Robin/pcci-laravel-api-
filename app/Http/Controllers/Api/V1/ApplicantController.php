@@ -34,6 +34,19 @@ class ApplicantController extends Controller
 
         return ApplicantResource::collection($applicants);
     }
+
+    // public function index()
+    // {
+    //     return ApplicantResource::collection(
+    //         Applicant::query()
+    //             ->when(
+    //                 auth()->user()->hasRole('treasurer'),
+    //                 fn ($q) => $q->where('status', 'approved')
+    //             )
+    //             ->get()
+    //     );
+    // }
+
     // Show all applicants (for super_admin only)
     // public function index()
     // {
@@ -65,33 +78,64 @@ class ApplicantController extends Controller
      */
     public function show(Applicant $applicant)
     {
-        
-        // abort_if(Auth::id() !== $applicant->user_id, 403, 'Access denied');
+        $user = auth()->user();
+
+        // Treasurer can ONLY view approved applicants
+        if ($user->hasRole('treasurer') && $applicant->status !== 'approved') {
+            return response()->json([
+                'message' => 'Access denied. Treasurer can only view approved applicants.'
+            ], 403);
+        }
 
         return new ApplicantResource($applicant);
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Applicant $applicant)
-    {
-        $data = $request -> validate([
-            'status' => 'required|in:pending,approved,rejected',
-            'membership_type' => 'required|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate', 
-        ]);
+    {   
+        $user = $request->user();
 
-        // 🔒 Protect only status: do not allow changing if already approved
-        if ($applicant->status === 'approved') {
-            unset($data['status']); // ignore client input for status
+        /**
+         * ADMIN / SUPER_ADMIN
+         * - Can approve/reject
+         * - Can set membership type
+         */
+        if ($user->hasAnyRole(['super_admin', 'admin'])) {
+
+            $data = $request->validate([
+                'status' => 'required|in:pending,approved,rejected',
+                'membership_type' => 'required|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate',
+            ]);
+
+            // 🔒 Once approved, status cannot be changed
+            if ($applicant->status === 'approved') {
+                unset($data['status']);
+            }
+
+            // Set approval date once
+            if (
+                isset($data['status']) &&
+                $data['status'] === 'approved' &&
+                $applicant->date_approved === null
+            ) {
+                $data['date_approved'] = now();
+            }
+
+            $applicant->update($data);
+
+            return new ApplicantResource($applicant);
         }
 
-        if (isset($data['status']) && $data['status'] === 'approved') {
-            $data['date_approved'] = now();
-        }
-        
-        $applicant->update($data);
-        return new ApplicantResource($applicant);
+
+        /**
+         * DEFAULT: DENY
+         */
+        return response()->json([
+            'message' => 'Unauthorized action.'
+        ], 403);
     }
 
     /**

@@ -43,7 +43,7 @@ class StoreApplicantRequest extends FormRequest
             'zip_code'                  => 'required|string|max:10',    
             'telephone_no'              => 'required|string|max:25',
             'website_socmed'            => 'nullable|url|max:255',
-            'member_dob'               => 'required|date', //this is for review
+            'member_dob'                => 'required|date', //this is for review
             'email'                     => 'required|email|unique:applicants,email',
             'tin_no'                    => 'nullable|string|max:20',
 

@@ -80,4 +80,10 @@ class Applicant extends Model
         'number_of_employees' => 'integer',
         'year_established' => 'integer',
     ];
+
+   public function member()
+    {
+        return $this->hasOne(Member::class);
+    }
+
 }

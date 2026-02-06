@@ -15,7 +15,19 @@ class ApplicantResource extends JsonResource
     public function toArray(Request $request): array
     {   
         $user = $request->user();
-        
+
+        /**
+         * PUBLIC (NO AUTH) – applicant view
+         * Used by /apply response
+         */
+        if (!$user) {
+            return [
+                'id' => $this->id,
+                'status' => $this->status,
+                'date_submitted' => $this->date_submitted?->toDateString(),
+            ];
+        }
+
         if ($user->hasAnyRole(['super_admin', 'admin'])) {
             return [
                 'id' => $this->id,
