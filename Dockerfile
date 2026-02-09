@@ -1,3 +1,6 @@
+# Use PHP 8.2 FPM as base
+FROM php:8.2-fpm
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     libpq-dev git unzip zip curl \
@@ -12,7 +15,7 @@ COPY composer.json composer.lock ./
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install PHP dependencies **without running scripts**
+# Install PHP dependencies without running scripts
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
 # Copy full project
