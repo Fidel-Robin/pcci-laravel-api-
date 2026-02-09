@@ -1,12 +1,6 @@
-FROM php:8.2-fpm
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    git \
-    unzip \
-    zip \
-    curl \
+    libpq-dev git unzip zip curl \
     && docker-php-ext-install pdo_pgsql
 
 # Set working directory
@@ -15,15 +9,20 @@ WORKDIR /var/www
 # Copy composer files
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies
+# Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Copy project
+# Install PHP dependencies **without running scripts**
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
+# Copy full project
 COPY . .
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+# Run post-install scripts manually
+RUN php artisan package:discover
 
 # Expose port
 EXPOSE 8000
