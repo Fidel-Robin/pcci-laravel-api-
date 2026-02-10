@@ -9,6 +9,8 @@ use App\Models\Post;
 use App\Http\Controllers\Api\V1\ApplicantController;
 use App\Models\Applicant;
 use App\Http\Controllers\Api\V1\MemberController;
+use App\Http\Controllers\Api\V1\MembershipTypeController;
+
 
 // Public route: applicant applies (anyone can submit)
 Route::post('/v1/apply', [ApplicantController::class, 'store']);
@@ -48,6 +50,21 @@ Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(functio
     Route::get('v1/members', [MemberController::class, 'index']);
 });
     
+
+// WRITE (super_admin only)
+Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
+    Route::apiResource('v1/membership-types', MembershipTypeController::class); 
+});
+
+
+
+
+
+
+
+
+
+
 //=================
 // Routes for posts (keeping as is, not implementing RBAC for posts per your request)
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
@@ -56,9 +73,9 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
         return $request->user();
     });
 
-    Route::prefix('v1')->group(function(){
-        Route::apiResource('posts', PostController::class);
-    });
+    // Route::prefix('v1')->group(function(){
+    //     Route::apiResource('posts', PostController::class);
+    // });
 });
 
 
