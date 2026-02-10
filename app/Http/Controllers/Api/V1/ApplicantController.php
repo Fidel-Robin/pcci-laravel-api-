@@ -106,7 +106,7 @@ class ApplicantController extends Controller
         if ($user->hasAnyRole(['super_admin', 'admin'])) {
 
             $data = $request->validate([
-                'status' => 'required|in:pending,approved,rejected',
+                'status' => 'required|in:pending,approved,rejected,paid',
                 'membership_type' => 'required|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate',
             ]);
 

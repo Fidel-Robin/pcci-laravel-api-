@@ -25,7 +25,7 @@ class StoreApplicantRequest extends FormRequest
 
             //===FOR PCCI USE ONLY (Upper Right)===
             'date_submitted'            => 'nullable|date',     //server controlled
-            'status'         => 'in:pending,approved,rejected', //server controlled
+            'status'                    => 'in:pending,approved,rejected,paid', //server controlled
             'date_approved'             => 'nullable|date',     //server controlled
             'membership_type'           => 'nullable|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate',  //set by the admin  
 

@@ -16,7 +16,7 @@ return new class extends Migration
 
             // === FOR PCCI USE ONLY (Upper Right) ===
             $table->date('date_submitted')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'paid'])->default('pending');
             $table->date('date_approved')->nullable();
             $table->string('membership_type')->nullable();
 

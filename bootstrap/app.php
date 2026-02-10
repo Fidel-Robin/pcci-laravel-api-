@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Register middleware aliases
         $middleware->alias([
-            'super_admin' => \App\Http\Middleware\CheckSuperAdmin::class,
+            // 'super_admin' => \App\Http\Middleware\CheckSuperAdmin::class,
 
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
