@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\V1\ApplicantController;
 use App\Models\Applicant;
 use App\Http\Controllers\Api\V1\MemberController;
 use App\Http\Controllers\Api\V1\MembershipTypeController;
+use App\Http\Controllers\Api\V1\PaymentController;
+
 
 
 // Public route: applicant applies (anyone can submit)
@@ -24,7 +26,7 @@ Route::post('/v1/apply', [ApplicantController::class, 'store']);
 //     });
 // });
 
-// READ
+//READ Applicants (Super Admin & Treasurer)
 Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])
     ->get('/v1/applicants', [ApplicantController::class, 'index']);
 
@@ -32,7 +34,7 @@ Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])
     ->get('/v1/applicants/{applicant}', [ApplicantController::class, 'show']);
 
 
-// WRITE (super_admin only)
+// WRITE Applicants (super_admin only)
 Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
     Route::post('/v1/applicants', [ApplicantController::class, 'store']);
     Route::put('/v1/applicants/{applicant}', [ApplicantController::class, 'update']);
@@ -50,32 +52,25 @@ Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(functio
     Route::get('v1/members', [MemberController::class, 'index']);
 });
     
-
-// WRITE (super_admin only)
+// WRITE MEMBERSHIP TYPES (super_admin only)
 Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
     Route::apiResource('v1/membership-types', MembershipTypeController::class); 
+});
+
+// READ/WRITE PAYMENTS (Super Admin & Treasurer)
+Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(function () {
+    Route::apiResource('v1/payments', PaymentController::class);
 });
 
 
 
 
-
-
-
-
-
-
-//=================
-// Routes for posts (keeping as is, not implementing RBAC for posts per your request)
+//READ CURRENT USER
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
 
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
-    // Route::prefix('v1')->group(function(){
-    //     Route::apiResource('posts', PostController::class);
-    // });
 });
 
 

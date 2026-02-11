@@ -13,46 +13,31 @@ class ApplicantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $user = request()->user();
+        $user = $request->user();
 
-        // Super_admin & admin → get all applicants
-        if ($user->hasAnyRole(['super_admin', 'admin'])) {
-            $applicants = Applicant::all();
+        $query = Applicant::query();
+
+        // ROLE-BASED BASE RESTRICTIONS
+        if ($user->hasRole('treasurer')) {
+            // Treasurer can only see approved or paid
+            $query->whereIn('status', ['approved', 'paid']);
         }
 
-        // Treasurer → only approved applicants
-        elseif ($user->hasRole('treasurer')) {
-            $applicants = Applicant::where('status', 'approved')->get();
+        elseif (! $user->hasAnyRole(['super_admin', 'admin'])) {
+            return response()->json([
+                'message' => 'Unauthorized.'
+            ], 403);
         }
 
-        else {
-            // default: empty collection
-            $applicants = collect();
+        // OPTIONAL FILTERING
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
-        return ApplicantResource::collection($applicants);
+        return ApplicantResource::collection($query->get());
     }
-
-    // public function index()
-    // {
-    //     return ApplicantResource::collection(
-    //         Applicant::query()
-    //             ->when(
-    //                 auth()->user()->hasRole('treasurer'),
-    //                 fn ($q) => $q->where('status', 'approved')
-    //             )
-    //             ->get()
-    //     );
-    // }
-
-    // Show all applicants (for super_admin only)
-    // public function index()
-    // {
-    //     return ApplicantResource::collection(Applicant::all());
-    // }
-
 
     /**
      * Store a newly created resource in storage.
@@ -80,15 +65,17 @@ class ApplicantController extends Controller
     {
         $user = auth()->user();
 
-        // Treasurer can ONLY view approved applicants
-        if ($user->hasRole('treasurer') && $applicant->status !== 'approved') {
+        if ($user->hasRole('treasurer') && 
+            !in_array($applicant->status, ['approved', 'paid'])) {
+
             return response()->json([
-                'message' => 'Access denied. Treasurer can only view approved applicants.'
+                'message' => 'Access denied.'
             ], 403);
         }
 
         return new ApplicantResource($applicant);
     }
+
 
 
     /**
