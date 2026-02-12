@@ -9,6 +9,11 @@ use App\Http\Requests\StoreMemberRequest;
 use App\Http\Resources\MemberResource;
 use Carbon\Carbon;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+
 class MemberController extends Controller
 {
     public function index()
@@ -65,7 +70,33 @@ class MemberController extends Controller
             'status' => $inductionDate ? 'active' : 'pending',
         ]);
 
-        return new \App\Http\Resources\MemberResource($member);
+
+
+        //Create user account for member (if not exists)
+        $applicant = $member->applicant;
+
+        $generatedPassword = null;
+
+        // Check if user already exists
+        if (!User::where('email', $applicant->email)->exists()) {
+
+            $generatedPassword = Str::random(8);
+
+            $user = User::create([
+                'name' => $applicant->registered_business_name,
+                'email' => $applicant->email,
+                'password' => Hash::make($generatedPassword),
+            ]);
+
+            $user->assignRole('member');
+        }
+
+
+        return response()->json([
+            'message' => 'Member created successfully',
+            'member' => new MemberResource($member),
+            'generated_password' => $generatedPassword,
+        ], 201);
     }
 
 

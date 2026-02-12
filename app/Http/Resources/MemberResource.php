@@ -21,9 +21,6 @@ class MemberResource extends JsonResource
             'membership_end_date' => $this->membership_end_date,
             'status' => $this->status,
             'created_at' => $this->created_at,
-
-            
-            
         ];
     }
 }
