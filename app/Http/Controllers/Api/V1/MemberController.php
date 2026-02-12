@@ -3,68 +3,110 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Member;
+use App\Models\MembershipType;
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Resources\MemberResource;
-use App\Models\Applicant;
-use App\Models\Member;
-use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class MemberController extends Controller
 {
     public function index()
     {
-        $user = request()->user();
+        return MemberResource::collection(
+            Member::latest()->paginate(10)
+        );
+    }
 
-        // Super_admin & admin → get all members
-        if ($user->hasAnyRole(['super_admin', 'admin'])) {
-            $members = Member::with('applicant')->get();
+   public function store(StoreMemberRequest $request)
+    {
+         // 1. Find applicant
+        $applicant = \App\Models\Applicant::findOrFail($request->applicant_id);
+
+        if ($applicant->status !== 'paid') {
+            return response()->json([
+                'message' => 'Only applicants with status "paid" can be added as members.'
+            ], 422);
         }
 
-        // Treasurer → only active members
-        elseif ($user->hasRole('treasurer')) {
-            $members = Member::with('applicant')->where('status', 'active')->get();
+        // 2. Prevent duplicate member
+        if (\App\Models\Member::where('applicant_id', $request->applicant_id)->exists()) {
+            return response()->json([
+                'message' => 'This applicant is already a member.'
+            ], 422);
         }
 
-        else {
-            // default: empty collection
-            $members = collect();
+        // 3. Get the original payment for this applicant
+        $payment = \App\Models\Payment::where('applicant_id', $request->applicant_id)->first();
+
+        if (!$payment) {
+            return response()->json([
+                'message' => 'Payment record not found for this applicant.'
+            ], 422);
         }
 
-        return MemberResource::collection($members);
+        // 4. Get membership type from payment
+        $membershipType = \App\Models\MembershipType::findOrFail($payment->membership_type_id);
+
+
+        // Handle induction date (nullable)
+        $inductionDate = $request->induction_date ? \Carbon\Carbon::parse($request->induction_date) : null;
+
+        // Auto-calculate membership_end_date if induction date is set
+        $membershipEndDate = $inductionDate ? $inductionDate->copy()->addMonths($membershipType->duration_in_months) : null;
+
+        // Create member
+        $member = \App\Models\Member::create([
+            'applicant_id' => $request->applicant_id,
+            // 'membership_type_id' => $request->membership_type_id,
+            'membership_type_id' => $payment->membership_type_id,
+            'induction_date' => $inductionDate,
+            'membership_end_date' => $membershipEndDate,
+            'status' => $inductionDate ? 'active' : 'pending',
+        ]);
+
+        return new \App\Http\Resources\MemberResource($member);
     }
 
 
-    public function store(StoreMemberRequest $request)
+    public function show(Member $member)
     {
-        $data = $request->validated();
+        return new MemberResource($member);
+    }
 
-        $applicant = Applicant::findOrFail($data['applicant_id']);
+    public function update(StoreMemberRequest $request, Member $member)
+    {
+        $membershipType = MembershipType::findOrFail($request->membership_type_id);
 
-        // Ensure applicant is approved
-        if ($applicant->status !== 'approved') {
-            return response()->json([
-                'message' => 'Applicant is not approved'
-            ], 403);
+        $inductionDate = $request->induction_date 
+            ? Carbon::parse($request->induction_date)
+            : null;
+
+        $membershipEndDate = null;
+
+        if ($inductionDate) {
+            $membershipEndDate = $inductionDate
+                ->copy()
+                ->addMonths($membershipType->duration_in_months);
         }
 
-        // Prevent duplicate membership
-        if ($applicant->member) {
-            return response()->json([
-                'message' => 'Applicant is already a member'
-            ], 409);
-        }
-
-        $member = Member::create([
-            'applicant_id'    => $applicant->id,
-            'membership_no'   => 'MBR-' . now()->format('Y') . '-' . Str::padLeft($applicant->id, 5, '0'),
-            'membership_type' => $data['membership_type'],
-            'activated_at'    => now(),
-            'expires_at'      => $data['expires_at'] ?? null,
-            'paid_at'         => now(),
-            'receipt_no'      => $data['receipt_no'],
-            'status'          => 'active',
+        $member->update([
+            'applicant_id' => $request->applicant_id,
+            'membership_type_id' => $request->membership_type_id,
+            'induction_date' => $inductionDate,
+            'membership_end_date' => $membershipEndDate,
+            'status' => $inductionDate ? 'active' : 'pending',
         ]);
 
         return new MemberResource($member);
+    }
+
+    public function destroy(Member $member)
+    {
+        $member->delete();
+
+        return response()->json([
+            'message' => 'Member deleted successfully.'
+        ]);
     }
 }

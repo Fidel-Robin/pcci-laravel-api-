@@ -4,34 +4,39 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('applicant_id')
-                  ->constrained('applicants')
-                  ->cascadeOnDelete();
+                ->constrained('applicants')
+                ->cascadeOnDelete()
+                ->unique(); // ensures 1-to-1 relationship with applicants
 
-            $table->string('membership_no')->unique();
-            $table->string('membership_type');
+            $table->foreignId('membership_type_id')
+                ->constrained('membership_types')
+                ->cascadeOnDelete();
 
-            $table->timestamp('activated_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
+            $table->date('induction_date')->nullable();
+            $table->date('membership_end_date')->nullable();
 
-            $table->timestamp('paid_at')->nullable();
-            $table->string('receipt_no')->unique();
-
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->string('status')->default('pending');
 
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('members');
     }
 };
-

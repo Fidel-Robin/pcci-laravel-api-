@@ -81,7 +81,7 @@ class Applicant extends Model
         'year_established' => 'integer',
     ];
 
-   public function member()
+    public function member()
     {
         return $this->hasOne(Member::class);
     }

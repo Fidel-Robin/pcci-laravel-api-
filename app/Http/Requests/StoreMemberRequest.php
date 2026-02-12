@@ -8,16 +8,18 @@ class StoreMemberRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->user()->hasRole('treasurer|super_admin');
+        return true;
     }
 
     public function rules(): array
     {
         return [
-            'applicant_id'    => 'required|exists:applicants,id',
-            'membership_type' => 'required|string|max:50',
-            'receipt_no'      => 'required|string|max:50|unique:members,receipt_no',
-            'expires_at'      => 'nullable|date|after:today',
+            'applicant_id' => 'required|exists:applicants,id',
+            'membership_type_id' => 'nullable|exists:membership_types,id',
+            'induction_date' => 'nullable|date',
+
+            // 'membership_end_date' => 'required|date|after:induction_date',
+            // 'status' => 'required|in:active,inactive,expired',
         ];
     }
 }

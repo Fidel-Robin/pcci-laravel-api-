@@ -11,28 +11,26 @@ class Member extends Model
 
     protected $fillable = [
         'applicant_id',
-        'membership_no',
-        'membership_type',
-        'activated_at',
-        'expires_at',
-        'paid_at',
-        'receipt_no',
+        'membership_type_id',
+        'induction_date',
+        'membership_end_date',
         'status',
     ];
 
     protected $casts = [
-        'activated_at' => 'datetime',
-        'expires_at'   => 'datetime',
-        'paid_at'      => 'datetime',
+        'induction_date' => 'date',
+        'membership_end_date' => 'date',
     ];
 
+    // Relationships
     public function applicant()
     {
         return $this->belongsTo(Applicant::class);
     }
 
-    public function user()
+    public function membershipType()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(MembershipType::class);
     }
+
 }
