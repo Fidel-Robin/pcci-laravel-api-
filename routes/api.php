@@ -11,8 +11,7 @@ use App\Models\Applicant;
 use App\Http\Controllers\Api\V1\MemberController;
 use App\Http\Controllers\Api\V1\MembershipTypeController;
 use App\Http\Controllers\Api\V1\PaymentController;
-
-
+use App\Http\Resources\UserResource;
 
 // Public route: applicant applies (anyone can submit)
 Route::post('/v1/apply', [ApplicantController::class, 'store']);
@@ -69,7 +68,9 @@ Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(functio
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
 
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        // return $request->user()->load('roles');
+        // return $request->user();
+        return new UserResource($request->user());
     });
 });
 
