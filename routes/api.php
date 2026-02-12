@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\V1\MemberController;
 use App\Http\Controllers\Api\V1\MembershipTypeController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Resources\UserResource;
+use App\Http\Controllers\Auth\RegisteredUserController;
+
 
 // Public route: applicant applies (anyone can submit)
 Route::post('/v1/apply', [ApplicantController::class, 'store']);
@@ -73,6 +75,13 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
         return new UserResource($request->user());
     });
 });
+
+Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
+    Route::get('/v1/users', [RegisteredUserController::class, 'index']); // all users
+    Route::get('/v1/users/{user}', [RegisteredUserController::class, 'show']); // single user details
+    Route::get('/v1/users/roles/{role}', [RegisteredUserController::class, 'getByRole']); // filter by role
+});
+
 
 
 require __DIR__.'/auth.php';

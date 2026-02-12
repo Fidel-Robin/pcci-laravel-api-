@@ -4,47 +4,66 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
+use Illuminate\Support\Str;
+use App\Http\Resources\UserResource;
 
 class RegisteredUserController extends Controller
-{
+{ 
+    // GET /v1/users
+    public function index()
+    {
+        $users = User::all();
+        return UserResource::collection($users);
+    }
+
+    // GET /v1/users/{user}
+    public function show(User $user)
+    {
+        return new UserResource($user);
+    }
+
+    // GET /v1/users/roles/{role}
+    public function getByRole($role)
+    {
+        $users = User::whereHas('roles', function ($query) use ($role) {
+            $query->where('name', $role);
+        })->get();
+
+        return UserResource::collection($users);
+    }  
+
+
     /**
      * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
-         $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|confirmed|min:8',
-            'role' => 'required|string|exists:roles,name', // validate role exists in roles table
+            'role' => 'required|string|exists:roles,name', // validate role exists
         ]);
 
+        // Generate a random 8-character password
+        $generatedPassword = Str::random(8);
+
+        // Create user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($generatedPassword),
         ]);
 
-         // Assign the role
+        // Assign role
         $user->assignRole($request->role);
-        
-        // event(new Registered($user));
-        // Auth::login($user);
-
-        // return response()->noContent(201);
 
         return response()->json([
             'message' => 'User created successfully',
             'user' => $user,
-            'role'=> $request->role,
+            'role' => $request->role,
+            'password' => $generatedPassword, // return the generated password so admin can send it
         ], 201);
-    }   
+    }
 }
