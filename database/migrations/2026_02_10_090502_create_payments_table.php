@@ -20,6 +20,9 @@ return new class extends Migration
             $table->foreignId('received_by_user_id')->constrained('users')->cascadeOnDelete();
             $table->date('payment_date');
             $table->timestamps();
+
+             // ✅ Prevent duplicate payment per applicant
+            $table->unique('applicant_id');
         });
     }
 
