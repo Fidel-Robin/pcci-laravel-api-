@@ -2,8 +2,9 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class ApplicantResource extends JsonResource
 {
@@ -39,8 +40,21 @@ class ApplicantResource extends JsonResource
                 'membership_type' => $this->membership_type,
 
                 // === PHOTO ===
-                'photo_url' => $this->photo
-                    ? asset('storage/' . $this->photo)
+                // 'photo_url' => $this->photo_path ? asset(Storage::url($this->photo_path)) : null,
+                // For public photo
+                'photo_url' => $this->photo_path ? asset('storage/' . $this->photo_path) : null,
+
+                // 'photo_url' => $this->photo_path
+                //     ? route('applicants.download', ['applicant' => $this->id, 'type' => 'photo'])
+                //     : null,
+
+                // === DOCUMENTS ===
+                'mayors_permit_url' => $this->mayors_permit_path
+                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'mayors_permit'])
+                    : null,
+
+                'dti_sec_url' => $this->dti_sec_path
+                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'dti_sec'])
                     : null,
 
                 // === BASIC PROFILE ===

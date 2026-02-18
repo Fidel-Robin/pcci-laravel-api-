@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreApplicantRequest;
 use App\Models\Applicant;
 use App\Http\Resources\ApplicantResource;
+use Illuminate\Support\Facades\Storage;
+
 
 class ApplicantController extends Controller
 {
@@ -51,6 +53,22 @@ class ApplicantController extends Controller
         $data['date_submitted'] = now();
         $data['status'] = 'pending';
         // $data['date_approved'] = now();
+
+         if ($request->hasFile('photo')) {
+            $data['photo_path'] =
+                $request->file('photo')->store('documents', 'public'); // public storage
+        }
+
+        if ($request->hasFile('mayors_permit')) {
+            $data['mayors_permit_path'] =
+                $request->file('mayors_permit')->store('documents', 'local'); // private storage
+        }
+
+        if ($request->hasFile('dti_sec')) {
+            $data['dti_sec_path'] =
+                $request->file('dti_sec')->store('documents', 'local'); // private storage
+        }
+
 
         $applicant = Applicant::create($data);
 
@@ -133,4 +151,35 @@ class ApplicantController extends Controller
         $applicant->delete();
         return response()->noContent();
     }
+
+
+
+    public function downloadDocument(Applicant $applicant, $type)
+    {
+        // Only admins or super_admin can download
+        $user = auth()->user();
+        if (! $user->hasAnyRole(['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $filePath = null;
+
+        if ($type === 'photo') {
+            $filePath = $applicant->photo_path;
+        }
+          elseif ($type === 'mayors_permit') {
+            $filePath = $applicant->mayors_permit_path;
+        } elseif ($type === 'dti_sec') {
+            $filePath = $applicant->dti_sec_path;
+        } else {
+            return response()->json(['message' => 'Invalid document type'], 400);
+        }
+
+        if (!$filePath || !Storage::disk('local')->exists($filePath)) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
+
+        return Storage::disk('local')->download($filePath);
+    }
+
 }

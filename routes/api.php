@@ -15,9 +15,9 @@ use App\Http\Resources\UserResource;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
 
+
 // Public route: applicant applies (anyone can submit)
 Route::post('/v1/apply', [ApplicantController::class, 'store']);
-
 
 // // Protected routes: only super_admin and treasurer can access applicants
 // Route::middleware(['auth:sanctum', 'throttle:api', 'role:super_admin|treasurer'])->group(function(){
@@ -81,6 +81,18 @@ Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
     Route::get('/v1/users/{user}', [RegisteredUserController::class, 'show']); // single user details
     Route::get('/v1/users/roles/{role}', [RegisteredUserController::class, 'getByRole']); // filter by role
 });
+
+
+
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/v1/applicants/{applicant}/download/{type}', 
+        [ApplicantController::class, 'downloadDocument'])
+        ->name('applicants.download');
+});
+
+
 
 
 

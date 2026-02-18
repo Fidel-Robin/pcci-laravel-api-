@@ -29,8 +29,7 @@ class StoreApplicantRequest extends FormRequest
             'date_approved'             => 'nullable|date',     //server controlled
             'membership_type'           => 'nullable|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate',  //set by the admin  
 
-            // ===PHOTO===
-            'photo'                     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+         
 
             // ===BASIC PROFILE===
             'registered_business_name'  => 'required|string|max:255',
@@ -71,6 +70,13 @@ class StoreApplicantRequest extends FormRequest
             'type_of_company'           => 'required|in:Corporation,Partnership,Single Proprietorship',
             'number_of_employees'       => 'required|integer|min:0',
             'year_established'          => 'required|digits:4|integer|min:1800|max:'.date('Y'),
+
+               // ===PHOTO===
+            'photo'                     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            // === REQUIRED DOCUMENTS ===
+            'mayors_permit'             => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'dti_sec'                   => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+
 
             // ===FOR PCCI-VALENZUELA CITY USE ONLY===
             'recommending_approval' => 'nullable|string|max:255', //this is the user admin who approved the applicant

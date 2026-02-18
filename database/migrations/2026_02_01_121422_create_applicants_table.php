@@ -20,8 +20,7 @@ return new class extends Migration
             $table->date('date_approved')->nullable();
             $table->string('membership_type')->nullable();
 
-            // === PHOTO ===
-            $table->string('photo')->nullable();
+           
 
             // === BASIC PROFILE ===
             $table->string('registered_business_name');
@@ -69,6 +68,11 @@ return new class extends Migration
             ]);
             $table->unsignedInteger('number_of_employees');
             $table->year('year_established');
+
+             // === DOCUMENTS & PHOTO ===  
+            $table->string('photo_path')->nullable();
+            $table->string('mayors_permit_path')->nullable();
+            $table->string('dti_sec_path')->nullable();
 
             // === FOR PCCI-VALENZUELA CITY USE ONLY ===
             $table->string('recommending_approval')->nullable();

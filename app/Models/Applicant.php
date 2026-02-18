@@ -15,8 +15,7 @@ class Applicant extends Model
         'date_approved',
         'membership_type',
 
-        // === PHOTO ===
-        'photo',
+        
 
         // === BASIC PROFILE ===
         'registered_business_name',
@@ -56,8 +55,19 @@ class Applicant extends Model
         'number_of_employees',
         'year_established',
 
+
+        // === PHOTO ===
+        'photo_path',
+
+        // === REQUIRED DOCUMENTS ===
+        'mayors_permit_path',
+        'dti_sec_path',
+
+
         // === FOR PCCI-VALENZUELA CITY USE ONLY ===
         'recommending_approval',
+
+
     ];
 
     /**
@@ -86,4 +96,5 @@ class Applicant extends Model
         return $this->hasOne(Member::class);
     }
 
+    
 }
