@@ -20,8 +20,6 @@ return new class extends Migration
             $table->date('date_approved')->nullable();
             $table->string('membership_type')->nullable();
 
-           
-
             // === BASIC PROFILE ===
             $table->string('registered_business_name');
             $table->string('trade_name')->nullable();

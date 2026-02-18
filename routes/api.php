@@ -85,7 +85,7 @@ Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
 
 
 
-
+//GET FILES - ADMINS
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/v1/applicants/{applicant}/download/{type}', 
         [ApplicantController::class, 'downloadDocument'])
