@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\MembershipTypeController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Api\V1\ProductController;
 
 
 
@@ -90,6 +91,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/v1/applicants/{applicant}/download/{type}', 
         [ApplicantController::class, 'downloadDocument'])
         ->name('applicants.download');
+});
+
+
+// POST PRODUCTS  -  MEMBER
+Route::middleware(['auth:sanctum', 'role:super_admin|member'])->group(function () {
+    Route::apiResource('v1/products', ProductController::class);
 });
 
 

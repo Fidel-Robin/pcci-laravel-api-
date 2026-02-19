@@ -33,4 +33,6 @@ class Member extends Model
         return $this->belongsTo(MembershipType::class);
     }
 
+   
+
 }
