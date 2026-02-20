@@ -84,8 +84,6 @@ Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
 });
 
 
-
-
 //GET FILES - ADMINS
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/v1/applicants/{applicant}/download/{type}', 
@@ -98,6 +96,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::middleware(['auth:sanctum', 'role:super_admin|member'])->group(function () {
     Route::apiResource('v1/products', ProductController::class);
 });
+
+use App\Http\Controllers\Api\V1\MemberApplicationController;
+
+Route::middleware(['auth:sanctum', 'role:member'])
+    ->prefix('v1/member')
+    ->group(function () {
+        Route::get('/application', [MemberApplicationController::class, 'show']);
+        Route::put('/application', [MemberApplicationController::class, 'update']);
+    });
 
 
 
