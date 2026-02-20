@@ -19,6 +19,12 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->unique(); // ensures 1-to-1 relationship with applicants
 
+            $table->foreignId('user_id')
+                ->nullable()
+                ->unique()
+                ->constrained('users')
+                ->cascadeOnDelete();    
+
             $table->foreignId('membership_type_id')
                 ->constrained('membership_types')
                 ->cascadeOnDelete();

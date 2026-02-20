@@ -143,6 +143,32 @@ class ApplicantResource extends JsonResource
             ];
         }
 
+        // MEMBER (NEW)
+        if ($user->hasRole('member')) {
+            return [
+                'id' => $this->id,
+                'status' => $this->status,
+                'date_submitted' => $this->date_submitted?->toDateString(),
+                'membership_type' => $this->membership_type,
+                'basic_profile' => [
+                    'registered_business_name' => $this->registered_business_name,
+                    'trade_name'               => $this->trade_name,
+                    'email'                    => $this->email,
+                    'business_address'         => $this->business_address,
+                    'city_municipality'        => $this->city_municipality,
+                    'province'                 => $this->province,
+                    'region'                   => $this->region,
+                ],
+                'official_representative' => [
+                    'first_name'  => $this->rep_first_name,
+                    'surname'     => $this->rep_surname,
+                    'designation' => $this->rep_designation,
+                    'contact_no'  => $this->rep_contact_no,
+                ],
+                'photo_url' => $this->photo_path ? asset('storage/' . $this->photo_path) : null,
+            ];
+        }
+
         return [
             'id' => $this->id,
             'name' => $this->name,

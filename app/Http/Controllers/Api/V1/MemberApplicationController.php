@@ -8,15 +8,37 @@ use App\Http\Resources\ApplicantResource;
 
 class MemberApplicationController extends Controller
 {
+    // public function show()
+    // {
+    //     // $application = auth()->user()->member->applicant;
+    //     $user = auth()->user();
+
+    //     if (!$user->member) {
+    //         return response()->json(['message' => 'Member not found'], 404);
+    //     }
+
+    //     $application = $user->member->applicant;
+
+    //     if (!$application) {
+    //         return response()->json(['message' => 'Application not found'], 404);
+    //     }
+
+    //     return new ApplicantResource($application);
+    // }
+
     public function show()
     {
-        $application = auth()->user()->member->applicant;
+        $user = auth()->user()->load('member.applicant'); // eager load
 
-        if (!$application) {
+        if (!$user->member) {
+            return response()->json(['message' => 'Member not found'], 404);
+        }
+
+        if (!$user->member->applicant) {
             return response()->json(['message' => 'Application not found'], 404);
         }
 
-        return new ApplicantResource($application);
+        return new ApplicantResource($user->member->applicant);
     }
 
     public function update(UpdateOwnApplicantRequest $request)

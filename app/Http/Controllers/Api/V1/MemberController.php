@@ -60,36 +60,34 @@ class MemberController extends Controller
         // Auto-calculate membership_end_date if induction date is set
         $membershipEndDate = $inductionDate ? $inductionDate->copy()->addMonths($membershipType->duration_in_months) : null;
 
-        // Create member
-        $member = \App\Models\Member::create([
+        // Create user account for member (if not exists)
+       // 1. Get applicant
+        $applicant = \App\Models\Applicant::findOrFail($request->applicant_id);
+
+        // 2. Ensure user exists
+        $generatedPassword = null;
+        $user = User::where('email', $applicant->email)->first();
+
+        if (!$user) {
+            $generatedPassword = Str::random(8);
+            $user = User::create([
+                'name' => $applicant->registered_business_name,
+                'email' => $applicant->email,
+                'password' => Hash::make($generatedPassword),
+            ]);
+            $user->assignRole('member');
+        }
+
+        // 3. Now create the member with user_id
+        $member = Member::create([
             'applicant_id' => $request->applicant_id,
-            // 'membership_type_id' => $request->membership_type_id,
+            'user_id' => $user->id, // ✅ now guaranteed
             'membership_type_id' => $payment->membership_type_id,
             'induction_date' => $inductionDate,
             'membership_end_date' => $membershipEndDate,
             'status' => $inductionDate ? 'active' : 'pending',
         ]);
 
-
-
-        //Create user account for member (if not exists)
-        $applicant = $member->applicant;
-
-        $generatedPassword = null;
-
-        // Check if user already exists
-        if (!User::where('email', $applicant->email)->exists()) {
-
-            $generatedPassword = Str::random(8);
-
-            $user = User::create([
-                'name' => $applicant->registered_business_name,
-                'email' => $applicant->email,
-                'password' => Hash::make($generatedPassword),
-            ]);
-
-            $user->assignRole('member');
-        }
 
 
         return response()->json([

@@ -11,6 +11,7 @@ class Member extends Model
 
     protected $fillable = [
         'applicant_id',
+        'user_id',
         'membership_type_id',
         'induction_date',
         'membership_end_date',
@@ -25,7 +26,7 @@ class Member extends Model
     // Relationships
     public function applicant()
     {
-        return $this->belongsTo(Applicant::class);
+        return $this->belongsTo(\App\Models\Applicant::class, 'applicant_id', 'id');
     }
 
     public function membershipType()
@@ -33,6 +34,9 @@ class Member extends Model
         return $this->belongsTo(MembershipType::class);
     }
 
-   
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

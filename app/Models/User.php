@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class);
     }
+
+    public function member()
+    {
+        return $this->hasOne(\App\Models\Member::class, 'user_id', 'id');
+    }
 }
