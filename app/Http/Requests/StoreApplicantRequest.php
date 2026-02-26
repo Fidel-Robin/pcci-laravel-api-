@@ -29,7 +29,6 @@ class StoreApplicantRequest extends FormRequest
             'date_approved'             => 'nullable|date',     //server controlled
             'membership_type'           => 'nullable|in:Charter,Life,Regular,Local Chamber,Trade/Industry Association,Affiliate',  //set by the admin  
 
-         
 
             // ===BASIC PROFILE===
             'registered_business_name'  => 'required|string|max:255',
@@ -71,7 +70,7 @@ class StoreApplicantRequest extends FormRequest
             'number_of_employees'       => 'required|integer|min:0',
             'year_established'          => 'required|digits:4|integer|min:1800|max:'.date('Y'),
 
-               // ===PHOTO===
+               // ===PHOTO===   
             'photo'                     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             // === REQUIRED DOCUMENTS ===
             'mayors_permit'             => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',

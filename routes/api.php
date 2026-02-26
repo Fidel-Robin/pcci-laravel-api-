@@ -69,10 +69,7 @@ Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(functio
 
 //READ CURRENT USER
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
-
-    Route::get('/user', function (Request $request) {
-        // return $request->user()->load('roles');
-        // return $request->user();
+    Route::get('/v1/user', function (Request $request) {
         return new UserResource($request->user());
     });
 });
@@ -100,14 +97,9 @@ Route::middleware(['auth:sanctum', 'role:super_admin|member'])->group(function (
 use App\Http\Controllers\Api\V1\MemberApplicationController;
 
 Route::middleware(['auth:sanctum', 'role:member'])
-    ->prefix('v1/member')
     ->group(function () {
-        Route::get('/application', [MemberApplicationController::class, 'show']);
-        Route::put('/application', [MemberApplicationController::class, 'update']);
+        Route::get('v1/application', [MemberApplicationController::class, 'show']);
+        Route::put('v1/application', [MemberApplicationController::class, 'update']);
     });
-
-
-
-
 
 require __DIR__.'/auth.php';
