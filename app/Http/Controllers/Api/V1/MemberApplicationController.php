@@ -57,7 +57,11 @@ class MemberApplicationController extends Controller
         }
 
         if ($request->hasFile('mayors_permit')) {
-            $data['mayors_permit_path'] = $request->file('mayors_permit')->store('applicants/permits', 'public');
+            $data['mayors_permit_path'] = $request->file('mayors_permit')->store('documents', 'local'); // ← was 'public', wrong disk
+        }
+
+        if ($request->hasFile('dti_sec')) {
+            $data['dti_sec_path'] = $request->file('dti_sec')->store('documents', 'local'); // ← was missing entirely
         }
 
         $application->update($data);
