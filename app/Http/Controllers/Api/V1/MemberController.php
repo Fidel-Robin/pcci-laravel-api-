@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\MembershipType;
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Resources\MemberResource;
+use App\Http\Requests\UpdateMemberRequest;
 use Carbon\Carbon;
 
 use App\Models\User;
@@ -103,31 +104,28 @@ class MemberController extends Controller
         return new MemberResource($member);
     }
 
-    public function update(StoreMemberRequest $request, Member $member)
+   public function update(UpdateMemberRequest $request, Member $member)
     {
-        $membershipType = MembershipType::findOrFail($request->membership_type_id);
+        // Only proceed if induction_date is provided
+        if ($request->filled('induction_date')) {
 
-        $inductionDate = $request->induction_date 
-            ? Carbon::parse($request->induction_date)
-            : null;
+            $inductionDate = Carbon::parse($request->induction_date);
 
-        $membershipEndDate = null;
+            // Get membership type from the member itself (not from request)
+            $membershipType = MembershipType::findOrFail($member->membership_type_id);
 
-        if ($inductionDate) {
             $membershipEndDate = $inductionDate
                 ->copy()
                 ->addMonths($membershipType->duration_in_months);
+
+            $member->update([
+                'induction_date' => $inductionDate,
+                'membership_end_date' => $membershipEndDate,
+                'status' => 'active',
+            ]);
         }
 
-        $member->update([
-            'applicant_id' => $request->applicant_id,
-            'membership_type_id' => $request->membership_type_id,
-            'induction_date' => $inductionDate,
-            'membership_end_date' => $membershipEndDate,
-            'status' => $inductionDate ? 'active' : 'pending',
-        ]);
-
-        return new MemberResource($member);
+        return new MemberResource($member->fresh());
     }
 
     public function destroy(Member $member)

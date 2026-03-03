@@ -49,6 +49,11 @@ Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(functio
     Route::post('v1/members', [MemberController::class, 'store']);
 });
 
+// UPDATE MEMBER (Super Admin & Treasurer)
+Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(function () {
+    Route::put('v1/members/{member}', [MemberController::class, 'update']);
+});
+
 // READ MEMBER (Super Admin & Treasurer)
 Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(function () {
     Route::get('v1/members', [MemberController::class, 'index']);
