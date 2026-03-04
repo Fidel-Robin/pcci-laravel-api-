@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\ExpiringMembershipNotificationController;
 
 
 
@@ -106,5 +107,10 @@ Route::middleware(['auth:sanctum', 'role:member'])
         Route::get('v1/application', [MemberApplicationController::class, 'show']);
         Route::put('v1/application', [MemberApplicationController::class, 'update']);
     });
+
+
+
+Route::get('v1/notifications', [ExpiringMembershipNotificationController::class, 'index']);
+Route::patch('v1/notifications/{id}/read', [ExpiringMembershipNotificationController::class, 'markAsRead']);    
 
 require __DIR__.'/auth.php';

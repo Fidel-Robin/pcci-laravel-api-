@@ -39,4 +39,9 @@ class Member extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function expiringNotifications()
+    {
+        return $this->hasMany(ExpiringMembershipNotification::class);
+    }
+
 }
