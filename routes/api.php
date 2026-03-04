@@ -110,6 +110,19 @@ Route::middleware(['auth:sanctum', 'role:member'])
 
 
 
+use App\Http\Controllers\Api\V1\ActivityController;
+
+
+Route::get('v1/activities', [ActivityController::class, 'index']);
+
+Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->group(function () {
+    Route::post('v1/activities', [ActivityController::class, 'store']);
+    Route::put('v1/activities/{activity}', [ActivityController::class, 'update']);
+    Route::delete('v1/activities/{activity}', [ActivityController::class, 'destroy']);
+});
+
+
+
 Route::get('v1/notifications', [ExpiringMembershipNotificationController::class, 'index']);
 Route::patch('v1/notifications/{id}/read', [ExpiringMembershipNotificationController::class, 'markAsRead']);    
 
