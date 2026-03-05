@@ -15,6 +15,8 @@ use App\Http\Resources\UserResource;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ExpiringMembershipNotificationController;
+use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\EventController;
 
 
 
@@ -123,7 +125,22 @@ Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->group(function ()
 
 
 
-Route::get('v1/notifications', [ExpiringMembershipNotificationController::class, 'index']);
-Route::patch('v1/notifications/{id}/read', [ExpiringMembershipNotificationController::class, 'markAsRead']);    
+
+
+// Public
+Route::get('/v1/events', [EventController::class, 'index']);
+Route::get('/v1/events/{event}', [EventController::class, 'show']);
+
+// Admin
+Route::middleware('auth:sanctum',  'role:super_admin|admin')->group(function () {
+    Route::apiResource('/v1/categories', CategoryController::class)->except(['show']);
+    Route::apiResource('/v1/events', EventController::class)->except(['index', 'show']);
+});
+
+
+Route::get('/v1/notifications', [ExpiringMembershipNotificationController::class, 'index']);
+Route::patch('/v1/notifications/{id}/read', [ExpiringMembershipNotificationController::class, 'markAsRead']);
+
+
 
 require __DIR__.'/auth.php';
