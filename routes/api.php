@@ -17,8 +17,10 @@ use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ExpiringMembershipNotificationController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\EventController;
-
-
+use App\Http\Controllers\Api\V1\MemberApplicationController;
+use App\Http\Controllers\Api\V1\ActivityController;
+use App\Http\Controllers\Api\V1\BoardOfTrusteeController;
+use App\Http\Controllers\Api\V1\BoardPositionController;
 
 // Public route: applicant applies (anyone can submit)
 Route::post('/v1/apply', [ApplicantController::class, 'store']);
@@ -102,7 +104,6 @@ Route::middleware(['auth:sanctum', 'role:super_admin|member'])->group(function (
     Route::apiResource('v1/products', ProductController::class);
 });
 
-use App\Http\Controllers\Api\V1\MemberApplicationController;
 
 Route::middleware(['auth:sanctum', 'role:member'])
     ->group(function () {
@@ -110,11 +111,7 @@ Route::middleware(['auth:sanctum', 'role:member'])
         Route::put('v1/application', [MemberApplicationController::class, 'update']);
     });
 
-
-
-use App\Http\Controllers\Api\V1\ActivityController;
-
-
+//Public
 Route::get('v1/activities', [ActivityController::class, 'index']);
 
 Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->group(function () {
@@ -124,23 +121,50 @@ Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->group(function ()
 });
 
 
-
-
-
 // Public
 Route::get('/v1/events', [EventController::class, 'index']);
 Route::get('/v1/events/{event}', [EventController::class, 'show']);
 
-// Admin
+// Admins can create, update, delete events
 Route::middleware('auth:sanctum',  'role:super_admin|admin')->group(function () {
     Route::apiResource('/v1/categories', CategoryController::class)->except(['show']);
     Route::apiResource('/v1/events', EventController::class)->except(['index', 'show']);
 });
 
 
+/*
+PUBLIC ROUTES
+*/
+Route::get('v1/trustees',[BoardOfTrusteeController::class,'index']);
+Route::get('v1/positions',[BoardPositionController::class,'index']);
+/*
+ADMIN / SUPERADMIN
+*/
+Route::middleware(['auth:sanctum','role:admin|super_admin'])->group(function(){
+
+    Route::post('v1/trustees',[BoardOfTrusteeController::class,'store']);
+    Route::put('v1/trustees/{boardOfTrustee}',[BoardOfTrusteeController::class,'update']);
+
+    Route::post('v1/positions',[BoardPositionController::class,'store']);
+    Route::put('v1/positions/{boardPosition}',[BoardPositionController::class,'update']);
+
+});
+/*
+SUPER ADMIN ONLY
+*/
+
+Route::middleware(['auth:sanctum','role:super_admin'])->group(function(){
+
+    Route::delete('v1/trustees/{boardOfTrustee}',[BoardOfTrusteeController::class,'destroy']);
+
+    Route::delete('v1/positions/{boardPosition}',[BoardPositionController::class,'destroy']);
+
+});
+
+
+
+
 Route::get('/v1/notifications', [ExpiringMembershipNotificationController::class, 'index']);
 Route::patch('/v1/notifications/{id}/read', [ExpiringMembershipNotificationController::class, 'markAsRead']);
-
-
 
 require __DIR__.'/auth.php';
