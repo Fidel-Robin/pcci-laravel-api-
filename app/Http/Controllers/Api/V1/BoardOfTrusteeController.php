@@ -25,7 +25,6 @@ class BoardOfTrusteeController extends Controller
         return BoardOfTrusteeResource::collection($trustees);
     }
 
-
     public function store(StoreBoardOfTrusteeRequest $request)
     {
         $data = $request->validated();
@@ -39,7 +38,6 @@ class BoardOfTrusteeController extends Controller
         return new BoardOfTrusteeResource($trustee->load('position'));
     }
 
-
    public function update(UpdateBoardOfTrusteeRequest $request, BoardOfTrustee $boardOfTrustee)
     {
         $data = $request->validated();
@@ -52,7 +50,6 @@ class BoardOfTrusteeController extends Controller
 
         return new BoardOfTrusteeResource($boardOfTrustee->load('position'));
     }
-
 
     public function destroy(BoardOfTrustee $boardOfTrustee)
     {

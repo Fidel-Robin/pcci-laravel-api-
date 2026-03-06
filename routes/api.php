@@ -22,72 +22,99 @@ use App\Http\Controllers\Api\V1\ActivityController;
 use App\Http\Controllers\Api\V1\BoardOfTrusteeController;
 use App\Http\Controllers\Api\V1\BoardPositionController;
 
-// Public route: applicant applies (anyone can submit)
+// PUBLIC 
+// Post ==>> Applicants
 Route::post('/v1/apply', [ApplicantController::class, 'store']);
 
-// // Protected routes: only super_admin and treasurer can access applicants
-// Route::middleware(['auth:sanctum', 'throttle:api', 'role:super_admin|treasurer'])->group(function(){
-//     Route::prefix('v1')->group(function(){
-//         // All CRUD operations require super_admin role
-//         Route::apiResource('applicants', ApplicantController::class);
-//     });
-// });
+//Get ==>> Activities   
+Route::get('v1/activities', [ActivityController::class, 'index']);
 
-//READ Applicants (Super Admin & Treasurer)
-Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])
-    ->get('/v1/applicants', [ApplicantController::class, 'index']);
+//Get ==>> Events
+Route::get('/v1/events', [EventController::class, 'index']);
+Route::get('/v1/events/{event}', [EventController::class, 'show']);
 
-Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])
-    ->get('/v1/applicants/{applicant}', [ApplicantController::class, 'show']);
+//Get ==>> Board of Trustees
+Route::get('v1/trustees',[BoardOfTrusteeController::class,'index']);
 
 
-// WRITE Applicants (super_admin only)
-Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
+
+// SUPER ADMIN & ADMIN - MANAGE USERS, MEMBERSHIP TYPES, BOARD OF TRUSTEES, BOARD POSITIONS
+Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->group(function () {
+    //Post, Put, Delete ==>> Applicants
     Route::post('/v1/applicants', [ApplicantController::class, 'store']);
     Route::put('/v1/applicants/{applicant}', [ApplicantController::class, 'update']);
-    Route::delete('/v1/applicants/{applicant}', [ApplicantController::class, 'destroy']);   
-});
-
-
-// WRITE MEMBER (Super Admin & Treasurer)
-Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(function () {
-    Route::post('v1/members', [MemberController::class, 'store']);
-});
-
-// UPDATE MEMBER (Super Admin & Treasurer)
-Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(function () {
-    Route::put('v1/members/{member}', [MemberController::class, 'update']);
-});
-
-// READ MEMBER (Super Admin & Treasurer)
-Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(function () {
-    Route::get('v1/members', [MemberController::class, 'index']);
-});
+    Route::delete('/v1/applicants/{applicant}', [ApplicantController::class, 'destroy']);
     
-// WRITE MEMBERSHIP TYPES (super_admin only)
-Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
-    Route::apiResource('v1/membership-types', MembershipTypeController::class); 
+    //Get, Post, Put,  ==>> Membership Types
+    Route::apiResource('v1/membership-types', MembershipTypeController::class)->except(['destroy']);
+
+    //Get ==>> Users
+    Route::get('/v1/users', [RegisteredUserController::class, 'index']); // all users
+    Route::get('/v1/users/{user}', [RegisteredUserController::class, 'show']); // single user details
+    Route::get('/v1/users/roles/{role}', [RegisteredUserController::class, 'getByRole']); // filter by role
+
+    // Post, Put, Delete ==>> Activities
+    Route::post('v1/activities', [ActivityController::class, 'store']);
+    Route::put('v1/activities/{activity}', [ActivityController::class, 'update']);
+    Route::delete('v1/activities/{activity}', [ActivityController::class, 'destroy']);
+
+    // Post, Put, Delete ==>> Events, Categories
+    Route::apiResource('/v1/categories', CategoryController::class)->except(['show']);
+    Route::apiResource('/v1/events', EventController::class)->except(['index', 'show']);
+    
+
+    // Get, Post, Put ==>> Board Positions
+    Route::get('v1/positions',[BoardPositionController::class,'index']);
+    Route::post('v1/positions',[BoardPositionController::class,'store']);
+    Route::put('v1/positions/{boardPosition}',[BoardPositionController::class,'update']);
+
+    // Post, Put, ==>> Board of Trustees
+    // get method is public
+    Route::post('v1/trustees',[BoardOfTrusteeController::class,'store']);
+    Route::put('v1/trustees/{boardOfTrustee}',[BoardOfTrusteeController::class,'update']);    
 });
 
-// READ/WRITE PAYMENTS (Super Admin & Treasurer)
-Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(function () {
+
+// SUPER ADMIN & TREASURER
+Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(function(){
+    Route::get('/v1/applicants', [ApplicantController::class, 'index']);
+    Route::get('/v1/applicants/{applicant}', [ApplicantController::class, 'show']);
+
+    Route::get('v1/members', [MemberController::class, 'index']);
+    Route::post('v1/members', [MemberController::class, 'store']);
+    Route::put('v1/members/{member}', [MemberController::class, 'update']);
+    
+    // READ/WRITE PAYMENTS (Super Admin & Treasurer)
     Route::apiResource('v1/payments', PaymentController::class);
 });
 
 
+// SUPER ADMIN
+Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
 
+    //Delete ==>> Users 
+    Route::delete('v1/trustees/{boardOfTrustee}',[BoardOfTrusteeController::class,'destroy']);
+    Route::delete('v1/positions/{boardPosition}',[BoardPositionController::class,'destroy']);
+});
+
+//SUPER ADMIN and MEMBER
+Route::middleware(['auth:sanctum', 'role:super_admin|member'])->group(function () {
+    // Post ==>> Products
+    Route::apiResource('v1/products', ProductController::class);
+});
+
+Route::middleware(['auth:sanctum', 'role:member'])
+    ->group(function () {
+        // Get, Put ==>> Member Application
+        Route::get('v1/application', [MemberApplicationController::class, 'show']);
+        Route::put('v1/application', [MemberApplicationController::class, 'update']);
+    });
 
 //READ CURRENT USER
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function(){
     Route::get('/v1/user', function (Request $request) {
         return new UserResource($request->user());
     });
-});
-
-Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
-    Route::get('/v1/users', [RegisteredUserController::class, 'index']); // all users
-    Route::get('/v1/users/{user}', [RegisteredUserController::class, 'show']); // single user details
-    Route::get('/v1/users/roles/{role}', [RegisteredUserController::class, 'getByRole']); // filter by role
 });
 
 
@@ -99,67 +126,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
-// POST PRODUCTS  -  MEMBER
-Route::middleware(['auth:sanctum', 'role:super_admin|member'])->group(function () {
-    Route::apiResource('v1/products', ProductController::class);
-});
 
 
-Route::middleware(['auth:sanctum', 'role:member'])
-    ->group(function () {
-        Route::get('v1/application', [MemberApplicationController::class, 'show']);
-        Route::put('v1/application', [MemberApplicationController::class, 'update']);
-    });
-
-//Public
-Route::get('v1/activities', [ActivityController::class, 'index']);
-
-Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->group(function () {
-    Route::post('v1/activities', [ActivityController::class, 'store']);
-    Route::put('v1/activities/{activity}', [ActivityController::class, 'update']);
-    Route::delete('v1/activities/{activity}', [ActivityController::class, 'destroy']);
-});
 
 
-// Public
-Route::get('/v1/events', [EventController::class, 'index']);
-Route::get('/v1/events/{event}', [EventController::class, 'show']);
-
-// Admins can create, update, delete events
-Route::middleware('auth:sanctum',  'role:super_admin|admin')->group(function () {
-    Route::apiResource('/v1/categories', CategoryController::class)->except(['show']);
-    Route::apiResource('/v1/events', EventController::class)->except(['index', 'show']);
-});
-
-
-/*
-PUBLIC ROUTES
-*/
-Route::get('v1/trustees',[BoardOfTrusteeController::class,'index']);
-Route::get('v1/positions',[BoardPositionController::class,'index']);
-/*
-ADMIN / SUPERADMIN
-*/
-Route::middleware(['auth:sanctum','role:admin|super_admin'])->group(function(){
-
-    Route::post('v1/trustees',[BoardOfTrusteeController::class,'store']);
-    Route::put('v1/trustees/{boardOfTrustee}',[BoardOfTrusteeController::class,'update']);
-
-    Route::post('v1/positions',[BoardPositionController::class,'store']);
-    Route::put('v1/positions/{boardPosition}',[BoardPositionController::class,'update']);
-
-});
-/*
-SUPER ADMIN ONLY
-*/
-
-Route::middleware(['auth:sanctum','role:super_admin'])->group(function(){
-
-    Route::delete('v1/trustees/{boardOfTrustee}',[BoardOfTrusteeController::class,'destroy']);
-
-    Route::delete('v1/positions/{boardPosition}',[BoardPositionController::class,'destroy']);
-
-});
 
 
 
