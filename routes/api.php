@@ -40,7 +40,9 @@ Route::get('v1/trustees',[BoardOfTrusteeController::class,'index']);
 
 // SUPER ADMIN & ADMIN - MANAGE USERS, MEMBERSHIP TYPES, BOARD OF TRUSTEES, BOARD POSITIONS
 Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->group(function () {
-    //Post, Put, Delete ==>> Applicants
+    //Get, Post, Put, Delete ==>> Applicants
+    // Route::get('/v1/applicants/', [ApplicantController::class, 'index']);
+    // Route::get('/v1/applicants/{applicant}', [ApplicantController::class, 'show']);
     Route::post('/v1/applicants', [ApplicantController::class, 'store']);
     Route::put('/v1/applicants/{applicant}', [ApplicantController::class, 'update']);
     Route::delete('/v1/applicants/{applicant}', [ApplicantController::class, 'destroy']);
@@ -77,15 +79,21 @@ Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->group(function ()
 
 // SUPER ADMIN & TREASURER
 Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(function(){
+    
+    // READ/WRITE PAYMENTS (Super Admin & Treasurer)
+    Route::apiResource('v1/payments', PaymentController::class);
+});
+
+
+Route::middleware(['auth:sanctum', 'role:super_admin|admin|treasurer'])->group(function () {
+
     Route::get('/v1/applicants', [ApplicantController::class, 'index']);
     Route::get('/v1/applicants/{applicant}', [ApplicantController::class, 'show']);
 
     Route::get('v1/members', [MemberController::class, 'index']);
     Route::post('v1/members', [MemberController::class, 'store']);
     Route::put('v1/members/{member}', [MemberController::class, 'update']);
-    
-    // READ/WRITE PAYMENTS (Super Admin & Treasurer)
-    Route::apiResource('v1/payments', PaymentController::class);
+
 });
 
 
@@ -98,7 +106,7 @@ Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
 });
 
 //SUPER ADMIN and MEMBER
-Route::middleware(['auth:sanctum', 'role:super_admin|member'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:member|admin|super_admin'])->group(function () {
     // Post ==>> Products
     Route::apiResource('v1/products', ProductController::class);
 });

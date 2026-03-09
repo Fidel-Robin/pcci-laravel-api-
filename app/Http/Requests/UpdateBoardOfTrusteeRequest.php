@@ -18,7 +18,8 @@ class UpdateBoardOfTrusteeRequest extends FormRequest
 
             'gender' => 'sometimes|required|in:male,female',
 
-            'board_position_id' => 'sometimes|required|exists:board_positions,id',
+            // 'board_position_id' => 'sometimes|required|exists:board_positions,id',
+            'board_position_id' => 'sometimes|exists:board_positions,id',
 
             'status' => 'sometimes|required|in:active,inactive'
         ];
