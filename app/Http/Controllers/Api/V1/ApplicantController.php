@@ -69,6 +69,10 @@ class ApplicantController extends Controller
                 $request->file('dti_sec')->store('documents', 'local'); // private storage
         }
 
+        if ($request->hasFile('proof_of_payment')) {
+            $data['proof_of_payment_path'] =
+                $request->file('proof_of_payment')->store('documents', 'local'); // private storage
+        }
 
         $applicant = Applicant::create($data);
 
@@ -171,7 +175,10 @@ class ApplicantController extends Controller
             $filePath = $applicant->mayors_permit_path;
         } elseif ($type === 'dti_sec') {
             $filePath = $applicant->dti_sec_path;
-        } else {
+        } elseif ($type === 'proof_of_payment') {
+            $filePath = $applicant->proof_of_payment_path;
+        }
+        else {
             return response()->json(['message' => 'Invalid document type'], 400);
         }
 

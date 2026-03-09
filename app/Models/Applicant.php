@@ -62,6 +62,7 @@ class Applicant extends Model
         // === REQUIRED DOCUMENTS ===
         'mayors_permit_path',
         'dti_sec_path',
+        'proof_of_payment_path',
 
 
         // === FOR PCCI-VALENZUELA CITY USE ONLY ===

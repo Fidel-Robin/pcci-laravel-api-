@@ -71,6 +71,7 @@ return new class extends Migration
             $table->string('photo_path')->nullable();
             $table->string('mayors_permit_path')->nullable();
             $table->string('dti_sec_path')->nullable();
+            $table->string('proof_of_payment_path');
 
             // === FOR PCCI-VALENZUELA CITY USE ONLY ===
             $table->string('recommending_approval')->nullable();

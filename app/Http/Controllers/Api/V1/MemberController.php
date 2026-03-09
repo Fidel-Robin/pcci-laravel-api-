@@ -117,7 +117,7 @@ class MemberController extends Controller
             $membershipEndDate = $inductionDate
                 ->copy()
                 ->addMonths($membershipType->duration_in_months);
-
+ 
             $member->update([
                 'induction_date' => $inductionDate,
                 'membership_end_date' => $membershipEndDate,

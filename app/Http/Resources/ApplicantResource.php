@@ -57,6 +57,10 @@ class ApplicantResource extends JsonResource
                     ? route('applicants.download', ['applicant' => $this->id, 'type' => 'dti_sec'])
                     : null,
 
+                'proof_of_payment_url' => $this->proof_of_payment_path
+                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'proof_of_payment'])
+                    : null,    
+
                 // === BASIC PROFILE ===
                 'basic_profile' => [
                     'registered_business_name' => $this->registered_business_name,

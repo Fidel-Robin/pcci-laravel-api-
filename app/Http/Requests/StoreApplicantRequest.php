@@ -75,7 +75,7 @@ class StoreApplicantRequest extends FormRequest
             // === REQUIRED DOCUMENTS ===
             'mayors_permit'             => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'dti_sec'                   => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-
+            'proof_of_payment'          => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
 
             // ===FOR PCCI-VALENZUELA CITY USE ONLY===
             'recommending_approval' => 'nullable|string|max:255', //this is the user admin who approved the applicant
