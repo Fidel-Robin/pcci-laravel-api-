@@ -11,25 +11,57 @@ class SuperAdminSeeder extends Seeder
 {
     public function run(): void
     {
-        // Make sure the role exists
-        $role = Role::firstOrCreate(['name' => 'super_admin']);
+        // Ensure roles exist
+        $superAdminRole = Role::firstOrCreate(['name' => 'super_admin']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $treasurerRole = Role::firstOrCreate(['name' => 'treasurer']);
 
-        // Create or get the super admin user
+        // SUPER ADMIN
         $superAdmin = User::firstOrCreate(
-            ['email' => 'admin@pcci.test'],
+            ['email' => 'super_admin@pcci.test'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password'), // dev only
+                'password' => Hash::make('password'),
             ]
         );
+        $superAdmin->syncRoles([$superAdminRole]);
 
-        // Assign role if not already assigned
-        if (!$superAdmin->hasRole('super_admin')) {
-            $superAdmin->assignRole($role);
-        }
+        // ADMIN
+        $admin = User::firstOrCreate(
+            ['email' => 'admin2@pcci.test'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $admin->syncRoles([$adminRole]);
 
-        $this->command->info('Super Admin user is ready!');
-        $this->command->info('Email: admin@pcci.test');
-        $this->command->info('Password: password');
+        // TREASURER
+        $treasurer = User::firstOrCreate(
+            ['email' => 'treasurer@pcci.test'],
+            [
+                'name' => 'Treasurer User',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $treasurer->syncRoles([$treasurerRole]);
+
+        $this->command->info('Users seeded successfully!');
+        $this->command->line('');
+
+        $this->command->info('Super Admin Credentials:');
+        $this->command->line('Email: super_admin@pcci.test');
+        $this->command->line('Password: password');
+        $this->command->line('');
+
+        $this->command->info('Admin Credentials:');
+        $this->command->line('Email: admin@pcci.test');
+        $this->command->line('Password: password');
+        $this->command->line('');
+
+        $this->command->info('Treasurer Credentials:');
+        $this->command->line('Email: treasurer@pcci.test');
+        $this->command->line('Password: password');
+
     }
 }
