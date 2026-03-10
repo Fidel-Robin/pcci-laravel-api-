@@ -25,9 +25,10 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();    
 
-            $table->foreignId('membership_type_id')
-                ->constrained('membership_types')
-                ->cascadeOnDelete();
+            // $table->foreignId('membership_type_id')
+            //     ->constrained('membership_types')
+            //     ->cascadeOnDelete();
+            $table->unsignedBigInteger('membership_type_id');
 
             $table->date('induction_date')->nullable();
             $table->date('membership_end_date')->nullable();
