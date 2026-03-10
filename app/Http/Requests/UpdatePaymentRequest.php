@@ -11,7 +11,7 @@ class UpdatePaymentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,12 +22,12 @@ class UpdatePaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'applicant_id' => 'sometimes|exists:applicants,id',
+            // 'applicant_id' => 'sometimes|exists:applicants,id',
             'membership_type_id' => 'sometimes|exists:membership_types,id',
-            'or_number' => 'sometimes|string|unique:payments,or_number,' . $this->payment,
-            'amount' => 'sometimes|numeric|min:0',
-            'received_by_user_id' => 'sometimes|exists:users,id',
-            'payment_date' => 'sometimes|date',
+            // 'or_number' => 'sometimes|string|unique:payments,or_number,' . $this->payment,
+            // 'amount' => 'sometimes|numeric|min:0',
+            // 'received_by_user_id' => 'sometimes|exists:users,id',
+            // 'payment_date' => 'sometimes|date',
         ];
     }
 

@@ -140,6 +140,11 @@ class ApplicantResource extends JsonResource
                     'email'                    => $this->email,
                 ],
 
+                // === PROOF OF PAYMENT ===
+                'proof_of_payment_url' => $this->proof_of_payment_path
+                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'proof_of_payment'])
+                    : null,
+
                 // === PCCI-VALENZUELA CITY USE ONLY ===
                 'internal_tracking' => [
                     'recommending_approval' => $this->recommending_approval,
