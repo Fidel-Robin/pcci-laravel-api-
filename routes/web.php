@@ -17,5 +17,18 @@ Route::get('/test-email', function() {
 });
 
 
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/refresh-db', function () {
+    // WARNING: this will drop all tables!
+    Artisan::call('migrate:fresh', [
+        '--seed' => true,
+        '--force' => true,
+    ]);
+
+    return "Database refreshed!";
+});
+
+
 
 require __DIR__.'/auth.php';
