@@ -37,18 +37,37 @@ Route::get('/v1/events/{event}', [EventController::class, 'show']);
 Route::get('v1/trustees',[BoardOfTrusteeController::class,'index']);
 
 
-// In routes/api.php
+
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema; // Important: Add this import
 
 Route::get('/refresh-db', function () {
     try {
+        // 1. Tell Postgres to ignore foreign key constraints temporarily
+        Schema::disableForeignKeyConstraints();
+
+        // 2. Run the migration and seeders
+        // --force is required because Render runs in 'production' mode
         Artisan::call('migrate:fresh', [
             '--force' => true,
             '--seed' => true
         ]);
-        return response()->json(['message' => 'Database Refreshed!']);
+
+        // 3. Re-enable constraints now that all tables exist
+        Schema::enableForeignKeyConstraints();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Database wiped, migrated, and seeded successfully!'
+        ]);
     } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
+        // If it fails, try to re-enable constraints so the DB isn't left in a broken state
+        Schema::enableForeignKeyConstraints();
+
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
     }
 });
 
