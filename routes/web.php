@@ -19,16 +19,12 @@ Route::get('/test-email', function() {
 
 use Illuminate\Support\Facades\Artisan;
 
-// In your temporary route
-Route::get('/refresh-db', function () {
-    DB::statement('SET session_replication_role = replica;'); // disable FK checks
-    Artisan::call('migrate:fresh', [
-        '--seed' => true,
-        '--force' => true,
+Route::get('/run-seeders', function () {
+    Artisan::call('db:seed', [
+        '--force' => true // required on production
     ]);
-    DB::statement('SET session_replication_role = DEFAULT;'); // enable FK checks
 
-    return "Database refreshed!";
+    return "Seeders ran successfully!";
 });
 
 
