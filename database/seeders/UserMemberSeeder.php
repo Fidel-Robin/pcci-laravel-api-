@@ -26,21 +26,18 @@ class UserMemberSeeder extends Seeder
 
             // Create user
             $user = User::create([
-                'name' => $member->applicant->rep_first_name . ' ' . $member->applicant->rep_surname,
+                'name' => $member->applicant->registered_business_name,
                 'email' => $email,
                 'password' => Hash::make($password),
             ]);
 
-            // Assign role
             $user->assignRole('member');
 
-            // Link member to user
             $member->update([
                 'user_id' => $user->id,
             ]);
 
-            // Save credentials for reference
-            $credentials[] = "Name: {$user->name} | Email: {$email} | Password: {$password}";
+            $credentials[] = "Business: {$user->name} | Email: {$email} | Password: {$password}";
         }
 
         // Save credentials to file
