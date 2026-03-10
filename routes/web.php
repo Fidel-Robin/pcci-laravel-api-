@@ -19,12 +19,16 @@ Route::get('/test-email', function() {
 
 use Illuminate\Support\Facades\Artisan;
 
-Route::get('/run-seeders', function () {
-    Artisan::call('db:seed', [
-        '--force' => true // required on production
+Route::get('/refresh-db', function () {
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+
+    Artisan::call('migrate:fresh', [
+        '--seed' => true,
+        '--force' => true
     ]);
 
-    return "Seeders ran successfully!";
+    return "Database refreshed!";
 });
 
 
