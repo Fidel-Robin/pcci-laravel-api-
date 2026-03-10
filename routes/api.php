@@ -37,6 +37,22 @@ Route::get('/v1/events/{event}', [EventController::class, 'show']);
 Route::get('v1/trustees',[BoardOfTrusteeController::class,'index']);
 
 
+// In routes/api.php
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/refresh-db', function () {
+    try {
+        Artisan::call('migrate:fresh', [
+            '--force' => true,
+            '--seed' => true
+        ]);
+        return response()->json(['message' => 'Database Refreshed!']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+
 
 // SUPER ADMIN & ADMIN - MANAGE USERS, MEMBERSHIP TYPES, BOARD OF TRUSTEES, BOARD POSITIONS
 Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->group(function () {

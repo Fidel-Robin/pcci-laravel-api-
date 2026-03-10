@@ -17,32 +17,32 @@ Route::get('/test-email', function() {
 });
 
 
-use Illuminate\Support\Facades\Artisan;
+// use Illuminate\Support\Facades\Artisan;
 
-Route::get('/refresh-db', function () {
-    try {
-        // Clear caches to ensure new Env variables are read
-        Artisan::call('config:clear');
-        Artisan::call('cache:clear');
+// Route::get('/refresh-db', function () {
+//     try {
+//         // Clear caches to ensure new Env variables are read
+//         Artisan::call('config:clear');
+//         Artisan::call('cache:clear');
 
-        // Run migrations with force (required for production/render)
-        // This will drop tables and re-run seeders
-        Artisan::call('migrate:fresh', [
-            '--force' => true,
-            '--seed' => true
-        ]);
+//         // Run migrations with force (required for production/render)
+//         // This will drop tables and re-run seeders
+//         Artisan::call('migrate:fresh', [
+//             '--force' => true,
+//             '--seed' => true
+//         ]);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Database wiped, migrated, and seeded successfully!'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage()
-        ], 500);
-    }
-});
+//         return response()->json([
+//             'status' => 'success',
+//             'message' => 'Database wiped, migrated, and seeded successfully!'
+//         ]);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => 'error',
+//             'message' => $e->getMessage()
+//         ], 500);
+//     }
+// });
 
 
 
