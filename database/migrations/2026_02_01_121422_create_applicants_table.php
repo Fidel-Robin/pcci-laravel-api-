@@ -71,8 +71,16 @@ return new class extends Migration
             $table->string('photo_path')->nullable();
             $table->string('mayors_permit_path')->nullable();
             $table->string('dti_sec_path')->nullable();
-            $table->string('proof_of_payment_path');
+            $table->string('proof_of_payment_path')->nullable();
 
+
+            // === MEMBER ACCOUNT SETT UP ===  
+            // -about_description, business_tagline,  biz hours [search how it will be done], tags [array], 
+            $table->text('about_description')->nullable();
+            $table->string('business_tagline')->nullable();
+            $table->json('business_hours')->nullable();
+            $table->json('tags')->nullable();
+            
             // === FOR PCCI-VALENZUELA CITY USE ONLY ===
             $table->string('recommending_approval')->nullable();
 

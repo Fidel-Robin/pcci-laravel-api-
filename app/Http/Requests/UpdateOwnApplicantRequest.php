@@ -72,6 +72,16 @@ class UpdateOwnApplicantRequest extends FormRequest
             'mayors_permit' => 'sometimes|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'dti_sec' => 'sometimes|file|mimes:pdf,jpg,jpeg,png|max:5120',
 
+            // BUSINESS PROFILE
+            'about_description' => 'sometimes|nullable|string',
+
+            'business_tagline' => 'sometimes|nullable|string|max:255',
+
+            'business_hours' => 'sometimes|nullable|array',
+            'business_hours.*' => 'string|max:100',
+
+            'tags' => 'sometimes|nullable|array',
+            'tags.*' => 'string|max:50',
         ];
     }
 }

@@ -110,6 +110,14 @@ class ApplicantResource extends JsonResource
                     'number_of_employees'  => $this->number_of_employees,
                     'year_established'     => $this->year_established,
                 ],
+                
+                  // === MEMBER ACCOUNT SET UP  === 
+                'business_additional_data' => [
+                    'about_description' => $this->about_description,
+                    'business_tagline' => $this->business_tagline,
+                    'business_hours' => $this->business_hours,
+                    'tags' => $this->tags,
+                ],
 
                 // === PCCI-VALENZUELA CITY USE ONLY ===
                 'internal_tracking' => [
@@ -221,6 +229,14 @@ class ApplicantResource extends JsonResource
                     'type_of_company'      => $this->type_of_company,
                     'number_of_employees'  => $this->number_of_employees,
                     'year_established'     => $this->year_established,
+                ],
+
+                 // === MEMBER ACCOUNT SET UP  === 
+                'business_additional_data' => [
+                    'about_description' => $this->about_description,
+                    'business_tagline' => $this->business_tagline,
+                    'business_hours' => $this->business_hours,
+                    'tags' => $this->tags,
                 ],
 
                 // === PCCI-VALENZUELA CITY USE ONLY ===

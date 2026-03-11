@@ -64,6 +64,12 @@ class Applicant extends Model
         'dti_sec_path',
         'proof_of_payment_path',
 
+        // === BUSINESS ADDITIONAL DATA ===
+        'about_description',
+        'business_tagline',
+        'business_hours',
+        'tags',
+
 
         // === FOR PCCI-VALENZUELA CITY USE ONLY ===
         'recommending_approval',
@@ -90,7 +96,11 @@ class Applicant extends Model
         'date_of_registration' => 'date',
         'number_of_employees' => 'integer',
         'year_established' => 'integer',
+
+        'business_hours' => 'array',
+        'tags' => 'array',
     ];
+
 
     public function member()
     {
