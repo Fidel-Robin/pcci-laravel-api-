@@ -65,6 +65,7 @@ class Applicant extends Model
         'proof_of_payment_path',
 
         // === BUSINESS ADDITIONAL DATA ===
+        'industry',
         'about_description',
         'business_tagline',
         'business_hours',

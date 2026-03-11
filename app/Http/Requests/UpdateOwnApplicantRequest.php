@@ -73,6 +73,7 @@ class UpdateOwnApplicantRequest extends FormRequest
             'dti_sec' => 'sometimes|file|mimes:pdf,jpg,jpeg,png|max:5120',
 
             // BUSINESS PROFILE
+            'industry' => 'sometimes|nullable|string',
             'about_description' => 'sometimes|nullable|string',
 
             'business_tagline' => 'sometimes|nullable|string|max:255',

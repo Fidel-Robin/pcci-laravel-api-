@@ -110,9 +110,10 @@ class ApplicantResource extends JsonResource
                     'number_of_employees'  => $this->number_of_employees,
                     'year_established'     => $this->year_established,
                 ],
-                
+
                   // === MEMBER ACCOUNT SET UP  === 
                 'business_additional_data' => [
+                    'industry' => $this->industry,
                     'about_description' => $this->about_description,
                     'business_tagline' => $this->business_tagline,
                     'business_hours' => $this->business_hours,
@@ -233,6 +234,7 @@ class ApplicantResource extends JsonResource
 
                  // === MEMBER ACCOUNT SET UP  === 
                 'business_additional_data' => [
+                    'industry' => $this->industry,
                     'about_description' => $this->about_description,
                     'business_tagline' => $this->business_tagline,
                     'business_hours' => $this->business_hours,
