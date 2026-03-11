@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\V1\MemberApplicationController;
 use App\Http\Controllers\Api\V1\ActivityController;
 use App\Http\Controllers\Api\V1\BoardOfTrusteeController;
 use App\Http\Controllers\Api\V1\BoardPositionController;
+use App\Http\Controllers\Api\V1\BusinessController;
 
 // PUBLIC 
 // Post ==>> Applicants
@@ -35,6 +36,11 @@ Route::get('/v1/events/{event}', [EventController::class, 'show']);
 
 //Get ==>> Board of Trustees
 Route::get('v1/trustees',[BoardOfTrusteeController::class,'index']);
+
+//Get ==>> Members (Business)
+// Route::get('v1/business',[MemberController::class,'index']);
+Route::get('v1/business',[BusinessController::class,'index']);
+
 
 
 
