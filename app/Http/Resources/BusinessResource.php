@@ -16,22 +16,21 @@ class BusinessResource extends JsonResource
         $applicant = $this->applicant;
 
         return [
-            'slug' => $applicant?->slug, // Useful for the "View Details" URL
-            'business_name' => $applicant?->registered_business_name,
-            
+            // 'slug' => $applicant?->slug, // Useful for the "View Details" URL
+
             // This ensures the URL starts with http://127.0.0.1:8000/storage/
             'photo_url' => $applicant?->photo_path 
                 ? asset('storage/' . $applicant->photo_path) 
                 : asset('images/default-logo.png'),
 
-            'tagline' => $applicant?->tagline ?? 'NA For your metal fabrication needs.',
-            'description' => $applicant?->company_description ?? 'NA We provide high-quality metal fabrication services for various industries.',
-            'phone_number' => $applicant?->phone_number,
+            'industry' => $applicant?->industry,
+            'registered_business_name' => $applicant?->registered_business_name,
+            'business_tagline' => $applicant?->business_tagline ?? 'this text shows coz this data is empty',
+            'tags' => $applicant?->tags ?? [], 
+            'telephone_no' => $applicant?->telephone_no ?? 'this text shows coz this data is empty',
             'location' => $applicant?->location, // e.g., "Sta. maria, Valenzuela City"
             
-            // Assuming tags are stored as an array or a relationship
-            'tags' => $applicant?->tags ?? [], 
-            
+            'description' => $applicant?->about_description ?? 'this text shows coz this data is empty',
             'business_hours' => $applicant?->business_hours,
             
             // We can still include status if the frontend needs to show 'Open' or 'Verified'
