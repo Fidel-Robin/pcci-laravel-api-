@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('zip_code', 10);
 
             $table->string('telephone_no', 25);
+            //
             $table->string('website_socmed')->nullable();
             $table->date('member_dob');
             $table->string('email')->unique();
