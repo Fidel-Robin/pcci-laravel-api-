@@ -51,18 +51,23 @@ class MemberApplicationController extends Controller
 
         $data = $request->validated();
 
-        // Handle file uploads
+        // 🚀 SWITCHING TO S3 (BACKBLAZE)
+        
+        // 1. Photo (Was 'public')
         if ($request->hasFile('photo')) {
-            $data['photo_path'] = $request->file('photo')->store('applicants/photos', 'public');
+            $data['photo_path'] = $request->file('photo')->store('applicants/photos', 's3');
         }
 
+        // 2. Mayor's Permit (Was 'local')
         if ($request->hasFile('mayors_permit')) {
-            $data['mayors_permit_path'] = $request->file('mayors_permit')->store('documents', 'local'); // ← was 'public', wrong disk
+            $data['mayors_permit_path'] = $request->file('mayors_permit')->store('applicants/documents', 's3');
         }
 
+        // 3. DTI/SEC (Was 'local')
         if ($request->hasFile('dti_sec')) {
-            $data['dti_sec_path'] = $request->file('dti_sec')->store('documents', 'local'); // ← was missing entirely
+            $data['dti_sec_path'] = $request->file('dti_sec')->store('applicants/documents', 's3');
         }
+
 
         $application->update($data);
 

@@ -175,6 +175,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
+//this can be deleted ata
+use App\Http\Controllers\Api\V1\FileUploadController;
+Route::post('v1/upload', [FileUploadController::class, 'upload']);
+
 
 
 

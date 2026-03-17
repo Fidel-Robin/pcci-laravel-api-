@@ -9,18 +9,19 @@ use Illuminate\Http\Request;
 class ApplicantResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
+     * Helper to generate temporary URLs for S3/Backblaze
      */
+    private function getS3Url($path, $minutes = 30)
+    {
+        if (!$path) return null;
+        return Storage::disk('s3')->temporaryUrl($path, now()->addMinutes($minutes));
+    }
+
     public function toArray(Request $request): array
     {   
         $user = $request->user();
 
-        /**
-         * PUBLIC (NO AUTH) – applicant view
-         * Used by /apply response
-         */
+        // PUBLIC (NO AUTH)
         if (!$user) {
             return [
                 'id' => $this->id,
@@ -29,43 +30,24 @@ class ApplicantResource extends JsonResource
             ];
         }
 
+        // SUPER ADMIN / ADMIN
         if ($user->hasAnyRole(['super_admin', 'admin'])) {
             return [
                 'id' => $this->id,
-
-                // === FOR PCCI USE ONLY (Upper Right) ===
                 'date_submitted'  => $this->date_submitted?->toDateString(),
                 'status'          => $this->status,
                 'date_approved'   => $this->date_approved?->toDateString(),
                 'membership_type' => $this->membership_type,
 
-                // === PHOTO ===
-                // 'photo_url' => $this->photo_path ? asset(Storage::url($this->photo_path)) : null,
-                // For public photo
-                'photo_url' => $this->photo_path ? asset('storage/' . $this->photo_path) : null,
+                // === PHOTO & DOCUMENTS (Backblaze Temporary URLs) ===
+                'photo_url'            => $this->getS3Url($this->photo_path, 60), // 1 hour for photos
+                'mayors_permit_url'    => $this->getS3Url($this->mayors_permit_path),
+                'dti_sec_url'          => $this->getS3Url($this->dti_sec_path),
+                'proof_of_payment_url' => $this->getS3Url($this->proof_of_payment_path),
 
-                // 'photo_url' => $this->photo_path
-                //     ? route('applicants.download', ['applicant' => $this->id, 'type' => 'photo'])
-                //     : null,
-
-                // === DOCUMENTS ===
-                'mayors_permit_url' => $this->mayors_permit_path
-                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'mayors_permit'])
-                    : null,
-
-                'dti_sec_url' => $this->dti_sec_path
-                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'dti_sec'])
-                    : null,
-
-                'proof_of_payment_url' => $this->proof_of_payment_path
-                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'proof_of_payment'])
-                    : null,    
-
-                // === BASIC PROFILE ===
                 'basic_profile' => [
                     'registered_business_name' => $this->registered_business_name,
                     'trade_name'               => $this->trade_name,
-
                     'business_location' => [
                         'business_address'  => $this->business_address,
                         'city_municipality' => $this->city_municipality,
@@ -73,7 +55,6 @@ class ApplicantResource extends JsonResource
                         'region'            => $this->region,
                         'zip_code'          => $this->zip_code,
                     ],
-
                     'telephone_no' => $this->telephone_no,
                     'website'      => $this->website_socmed,
                     'member_dob'   => $this->member_dob?->toDateString(),
@@ -81,7 +62,6 @@ class ApplicantResource extends JsonResource
                     'tin_no'       => $this->tin_no,
                 ],
 
-                // === OFFICIAL REPRESENTATIVE TO PCCI ===
                 'official_representative' => [
                     'first_name'  => $this->rep_first_name,
                     'mid_name'    => $this->rep_mid_name,
@@ -91,7 +71,6 @@ class ApplicantResource extends JsonResource
                     'contact_no'  => $this->rep_contact_no,
                 ],
 
-                // === ALTERNATE REPRESENTATIVE ===
                 'alternate_representative' => [
                     'first_name'  => $this->alt_first_name,
                     'mid_name'    => $this->alt_mid_name,
@@ -101,7 +80,6 @@ class ApplicantResource extends JsonResource
                     'contact_no'  => $this->alt_contact_no,
                 ],
 
-                // === MEMBERSHIP IN OTHER BUSINESS ORGANIZATION ===
                 'organization_membership' => [
                     'name_of_organization' => $this->name_of_organization,
                     'registration_number'  => $this->registration_number,
@@ -111,7 +89,6 @@ class ApplicantResource extends JsonResource
                     'year_established'     => $this->year_established,
                 ],
 
-                  // === MEMBER ACCOUNT SET UP  === 
                 'business_additional_data' => [
                     'industry' => $this->industry,
                     'about_description' => $this->about_description,
@@ -120,7 +97,6 @@ class ApplicantResource extends JsonResource
                     'tags' => $this->tags,
                 ],
 
-                // === PCCI-VALENZUELA CITY USE ONLY ===
                 'internal_tracking' => [
                     'recommending_approval' => $this->recommending_approval,
                 ],
@@ -132,70 +108,55 @@ class ApplicantResource extends JsonResource
             ];
         }
 
+        // TREASURER
         if ($user->hasRole('treasurer')) {
             return [
                 'id' => $this->id,
-
-                // === FOR PCCI USE ONLY (Upper Right) ===
                 'date_submitted'  => $this->date_submitted?->toDateString(),
                 'status'          => $this->status,
                 'date_approved'   => $this->date_approved?->toDateString(),
                 'membership_type' => $this->membership_type,
 
-                // === BASIC PROFILE ===
                 'basic_profile' => [
                     'registered_business_name' => $this->registered_business_name,
                     'trade_name'               => $this->trade_name,
                     'email'                    => $this->email,
                 ],
 
-                // === PROOF OF PAYMENT ===
-                'proof_of_payment_url' => $this->proof_of_payment_path
-                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'proof_of_payment'])
-                    : null,
+                // Proof of Payment (Backblaze Temporary URL)
+                'proof_of_payment_url' => $this->getS3Url($this->proof_of_payment_path),
 
-                // === PCCI-VALENZUELA CITY USE ONLY ===
                 'internal_tracking' => [
                     'recommending_approval' => $this->recommending_approval,
                 ],
             ];
         }
 
-        // MEMBER (NEW)
+        // MEMBER
         if ($user->hasRole('member')) {
             return [
-                 // === FOR PCCI USE ONLY (Upper Right) ===
                 'date_submitted'  => $this->date_submitted?->toDateString(),
                 'status'          => $this->status,
                 'date_approved'   => $this->date_approved?->toDateString(),
                 'membership_type' => $this->membership_type,
 
-                // === PHOTO ===
-                'photo_url' => $this->photo_path ? asset('storage/' . $this->photo_path) : null,
+                // === Backblaze Temporary URLs ===
+                'photo_url'         => $this->getS3Url($this->photo_path, 60),
+                'mayors_permit_url' => $this->getS3Url($this->mayors_permit_path),
+                'dti_sec_url'       => $this->getS3Url($this->dti_sec_path),
+                'proof_of_payment_url' => $this->getS3Url($this->proof_of_payment_path),
 
-                // === DOCUMENTS ===
-                'mayors_permit_url' => $this->mayors_permit_path
-                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'mayors_permit'])
-                    : null,
-
-                'dti_sec_url' => $this->dti_sec_path
-                    ? route('applicants.download', ['applicant' => $this->id, 'type' => 'dti_sec'])
-                    : null,
-
-                // === BASIC PROFILE ===
                 'basic_profile' => [
                     'registered_business_name' => $this->registered_business_name,
                     'trade_name'               => $this->trade_name,
-
                     'business_location' => [
                         'business_address'  => $this->business_address,
                         'city_municipality' => $this->city_municipality,
                         'province'          => $this->province,
                         'region'            => $this->region,
                         'zip_code'          => $this->zip_code,
-                        'location_link' => $this->location_link ?? null,
+                        'location_link'     => $this->location_link ?? null,
                     ],
-
                     'telephone_no' => $this->telephone_no,
                     'website'      => $this->website_socmed,
                     'member_dob'   => $this->member_dob?->toDateString(),
@@ -203,7 +164,6 @@ class ApplicantResource extends JsonResource
                     'tin_no'       => $this->tin_no,
                 ],
 
-                // === OFFICIAL REPRESENTATIVE TO PCCI ===
                 'official_representative' => [
                     'first_name'  => $this->rep_first_name,
                     'mid_name'    => $this->rep_mid_name,
@@ -213,7 +173,6 @@ class ApplicantResource extends JsonResource
                     'contact_no'  => $this->rep_contact_no,
                 ],
 
-                // === ALTERNATE REPRESENTATIVE ===
                 'alternate_representative' => [
                     'first_name'  => $this->alt_first_name,
                     'mid_name'    => $this->alt_mid_name,
@@ -223,7 +182,6 @@ class ApplicantResource extends JsonResource
                     'contact_no'  => $this->alt_contact_no,
                 ],
 
-                // === MEMBERSHIP IN OTHER BUSINESS ORGANIZATION ===
                 'organization_membership' => [
                     'name_of_organization' => $this->name_of_organization,
                     'registration_number'  => $this->registration_number,
@@ -233,7 +191,6 @@ class ApplicantResource extends JsonResource
                     'year_established'     => $this->year_established,
                 ],
 
-                 // === MEMBER ACCOUNT SET UP  === 
                 'business_additional_data' => [
                     'industry' => $this->industry,
                     'about_description' => $this->about_description,
@@ -242,7 +199,6 @@ class ApplicantResource extends JsonResource
                     'tags' => $this->tags,
                 ],
 
-                // === PCCI-VALENZUELA CITY USE ONLY ===
                 'internal_tracking' => [
                     'recommending_approval' => $this->recommending_approval,
                 ],

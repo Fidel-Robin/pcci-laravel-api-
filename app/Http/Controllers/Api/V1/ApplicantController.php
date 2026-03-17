@@ -41,10 +41,6 @@ class ApplicantController extends Controller
         return ApplicantResource::collection($query->get());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-     // Submit personal details
     public function store(StoreApplicantRequest $request)
     {
         $data = $request->validated();
@@ -52,26 +48,27 @@ class ApplicantController extends Controller
         // Server-controlled fields
         $data['date_submitted'] = now();
         $data['status'] = 'pending';
-        // $data['date_approved'] = now();
 
-         if ($request->hasFile('photo')) {
-            $data['photo_path'] =
-                $request->file('photo')->store('documents', 'public'); // public storage
+        // 🚀 SWITCHING TO S3 (BACKBLAZE)
+        
+        // 1. Photo (Was 'public')
+        if ($request->hasFile('photo')) {
+            $data['photo_path'] = $request->file('photo')->store('applicants/photos', 's3');
         }
 
+        // 2. Mayor's Permit (Was 'local')
         if ($request->hasFile('mayors_permit')) {
-            $data['mayors_permit_path'] =
-                $request->file('mayors_permit')->store('documents', 'local'); // private storage
+            $data['mayors_permit_path'] = $request->file('mayors_permit')->store('applicants/documents', 's3');
         }
 
+        // 3. DTI/SEC (Was 'local')
         if ($request->hasFile('dti_sec')) {
-            $data['dti_sec_path'] =
-                $request->file('dti_sec')->store('documents', 'local'); // private storage
+            $data['dti_sec_path'] = $request->file('dti_sec')->store('applicants/documents', 's3');
         }
 
+        // 4. Proof of Payment (Was 'local')
         if ($request->hasFile('proof_of_payment')) {
-            $data['proof_of_payment_path'] =
-                $request->file('proof_of_payment')->store('documents', 'local'); // private storage
+            $data['proof_of_payment_path'] = $request->file('proof_of_payment')->store('applicants/documents', 's3');
         }
 
         $applicant = Applicant::create($data);
@@ -158,35 +155,31 @@ class ApplicantController extends Controller
 
 
 
+    /**
+     * NOTE: This method is now mostly for "forcing" a download.
+     * With our new Resource, users can just click the temporaryUrl.
+     */
     public function downloadDocument(Applicant $applicant, $type)
     {
-        // Only admins or super_admin can download
         $user = auth()->user();
         if (! $user->hasAnyRole(['super_admin', 'admin'])) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $filePath = null;
+        $filePath = match ($type) {
+            'photo' => $applicant->photo_path,
+            'mayors_permit' => $applicant->mayors_permit_path,
+            'dti_sec' => $applicant->dti_sec_path,
+            'proof_of_payment' => $applicant->proof_of_payment_path,
+            default => null,
+        };
 
-        if ($type === 'photo') {
-            $filePath = $applicant->photo_path;
-        }
-          elseif ($type === 'mayors_permit') {
-            $filePath = $applicant->mayors_permit_path;
-        } elseif ($type === 'dti_sec') {
-            $filePath = $applicant->dti_sec_path;
-        } elseif ($type === 'proof_of_payment') {
-            $filePath = $applicant->proof_of_payment_path;
-        }
-        else {
-            return response()->json(['message' => 'Invalid document type'], 400);
+        // Check S3 disk instead of local
+        if (!$filePath || !Storage::disk('s3')->exists($filePath)) {
+            return response()->json(['message' => 'File not found on cloud storage'], 404);
         }
 
-        if (!$filePath || !Storage::disk('local')->exists($filePath)) {
-            return response()->json(['message' => 'File not found'], 404);
-        }
-
-        return Storage::disk('local')->download($filePath);
+        return Storage::disk('s3')->download($filePath);
     }
 
 }

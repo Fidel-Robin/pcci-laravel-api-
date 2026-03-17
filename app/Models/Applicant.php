@@ -109,5 +109,23 @@ class Applicant extends Model
         return $this->hasOne(Member::class);
     }
 
+    protected static function booted()
+    {
+        static::deleting(function ($applicant) {
+            $paths = [
+                $applicant->photo_path,
+                $applicant->mayors_permit_path,
+                $applicant->dti_sec_path,
+                $applicant->proof_of_payment_path
+            ];
+
+            foreach ($paths as $path) {
+                if ($path) {
+                    Storage::disk('s3')->delete($path);
+                }
+            }
+        });
+    }
+
     
 }
