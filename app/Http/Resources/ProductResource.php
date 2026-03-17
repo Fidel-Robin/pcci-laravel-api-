@@ -1,7 +1,5 @@
 <?php
 
-// app/Http/Resources/ProductResource.php
-
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -10,6 +8,16 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductResource extends JsonResource
 {
+    /**
+     * Helper to generate temporary URLs for S3/Backblaze
+     * Copied from ApplicantResource for consistency
+     */
+    private function getS3Url($path, $minutes = 30)
+    {
+        if (!$path) return null;
+        return Storage::disk('s3')->temporaryUrl($path, now()->addMinutes($minutes));
+    }
+
     public function toArray(Request $request): array
     {
         return [
@@ -17,11 +25,14 @@ class ProductResource extends JsonResource
             'user_id' => $this->user_id,
             'name' => $this->name,
             'description' => $this->description,
-            'photo_url' => $this->photo_path 
-                ? Storage::url($this->photo_path)
-                : null,
+            
+            // === PHOTO (Backblaze Temporary URL) ===
+            // For products, you might want a longer duration (e.g., 2 hours / 120 mins) 
+            // so the customer doesn't see broken images while browsing
+            'photo_url' => $this->getS3Url($this->photo_path, 120),
+                
             'status' => $this->status,
-            'created_at' => $this->created_at,
+            'created_at' => $this->created_at?->toDateTimeString(),
         ];
     }
 }

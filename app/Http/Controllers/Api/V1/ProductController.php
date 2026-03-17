@@ -20,8 +20,8 @@ class ProductController extends Controller
 
         // Regular member → only their own products
         if (!$user->hasAnyRole(['super_admin', 'admin'])) {
-            $query->where('user_id', $user->id)
-                ->where('status', 'active'); // optional, if you want public listing
+            $query->where('user_id', $user->id);
+                // ->where('status', 'active'); // optional, if you want public listing
         }
 
         // Admin → can filter by user_id or see all
@@ -64,7 +64,7 @@ class ProductController extends Controller
 
         if ($request->hasFile('photo')) {
             $data['photo_path'] = $request->file('photo')
-                ->store('products', 'public');
+                ->store('products', 's3');
         }
 
         $data['status'] = 'active'; // default
@@ -91,7 +91,7 @@ class ProductController extends Controller
         return new ProductResource($product);
     }
 
-    /**
+   /**
      * Update product (including status)
      */
     public function update(Request $request, Product $product)
@@ -111,12 +111,14 @@ class ProductController extends Controller
 
         if ($request->hasFile('photo')) {
 
+            // 1. Delete the old photo from S3 if it exists
             if ($product->photo_path) {
-                Storage::disk('public')->delete($product->photo_path);
+                Storage::disk('s3')->delete($product->photo_path);
             }
 
+            // 2. Store the new photo in S3
             $data['photo_path'] = $request->file('photo')
-                ->store('products', 'public');
+                ->store('products', 's3');
         }
 
         $product->update($data);
