@@ -72,7 +72,7 @@ class UpdateOwnApplicantRequest extends FormRequest
             'mayors_permit' => 'sometimes|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'dti_sec' => 'sometimes|file|mimes:pdf,jpg,jpeg,png|max:5120',
 
-            // BUSINESS PROFILE
+            // BUSINESS PROFILE (after logging in, they can update these fields)
             'industry' => 'sometimes|nullable|string',
             'about_description' => 'sometimes|nullable|string',
 
@@ -80,6 +80,8 @@ class UpdateOwnApplicantRequest extends FormRequest
 
             'business_hours' => 'sometimes|nullable|array',
             'business_hours.*' => 'string|max:100',
+
+            'location_link' => 'sometimes|nullable|string|max:255',
 
             'tags' => 'sometimes|nullable|array',
             'tags.*' => 'string|max:50',

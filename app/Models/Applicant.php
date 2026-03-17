@@ -70,6 +70,7 @@ class Applicant extends Model
         'business_tagline',
         'business_hours',
         'tags',
+        'location_link',
 
 
         // === FOR PCCI-VALENZUELA CITY USE ONLY ===

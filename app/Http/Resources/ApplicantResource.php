@@ -193,6 +193,7 @@ class ApplicantResource extends JsonResource
                         'province'          => $this->province,
                         'region'            => $this->region,
                         'zip_code'          => $this->zip_code,
+                        'location_link' => $this->location_link ?? null,
                     ],
 
                     'telephone_no' => $this->telephone_no,

@@ -34,7 +34,18 @@ class BusinessResource extends JsonResource
             'business_hours' => $applicant?->business_hours,
             
             // We can still include status if the frontend needs to show 'Open' or 'Verified'
-            'status' => $this->status, 
+            'status' => $this->status,
+            
+            'email' => $applicant?->email,
+            'business_location' => [
+                    'business_address'  => $applicant?->business_address,
+                    'city_municipality' => $applicant?->city_municipality,
+                    'province'          => $applicant?->province,
+                    'region'            => $applicant?->region,
+                    'zip_code'          => $applicant?->zip_code,
+                    //link to google map, we can generate it using the address fields, but for now we will just add a placeholder
+                    'location_link' => $applicant?->location_link ?? 'No.04 fatima lane La Milagrosa Village, Marikina Heights 1810',
+                ],
         ];
     }
 }

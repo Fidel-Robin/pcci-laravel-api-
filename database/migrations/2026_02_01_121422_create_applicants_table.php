@@ -76,12 +76,12 @@ return new class extends Migration
 
 
             // === MEMBER ACCOUNT SETT UP ===  
-            // -about_description, business_tagline,  biz hours [search how it will be done], tags [array], 
             $table->text('industry')->nullable();
             $table->text('about_description')->nullable();
             $table->string('business_tagline')->nullable();
             $table->json('business_hours')->nullable();
             $table->json('tags')->nullable();
+            $table->string('location_link')->nullable();
             
             // === FOR PCCI-VALENZUELA CITY USE ONLY ===
             $table->string('recommending_approval')->nullable();
