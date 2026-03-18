@@ -54,30 +54,28 @@ use Illuminate\Support\Facades\Schema; // Important: Add this import
 
 Route::get('/refresh-db', function () {
     try {
-        // 1. Tell Postgres to ignore foreign key constraints temporarily
-        Schema::disableForeignKeyConstraints();
+        \Log::info('Refresh DB started');
 
-        // 2. Run the migration and seeders
-        // --force is required because Render runs in 'production' mode
-        Artisan::call('migrate:fresh', [
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+
+        \Artisan::call('migrate:fresh', [
             '--force' => true,
             '--seed' => true
         ]);
 
-        // 3. Re-enable constraints now that all tables exist
-        Schema::enableForeignKeyConstraints();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Database wiped, migrated, and seeded successfully!'
+            'output' => \Artisan::output()
         ]);
-    } catch (\Exception $e) {
-        // If it fails, try to re-enable constraints so the DB isn't left in a broken state
-        Schema::enableForeignKeyConstraints();
+
+    } catch (\Throwable $e) {
+        \Log::error('Refresh DB failed: ' . $e->getMessage());
 
         return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage()
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
         ], 500);
     }
 });
