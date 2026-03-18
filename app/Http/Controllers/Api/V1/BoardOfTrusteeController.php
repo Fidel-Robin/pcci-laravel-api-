@@ -29,8 +29,9 @@ class BoardOfTrusteeController extends Controller
     {
         $data = $request->validated();
 
+         // 🚀 SWITCHING TO S3 (BACKBLAZE)
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('trustees', 'public');
+            $data['image'] = $request->file('image')->store('trustees', 's3');
         }
 
         $trustee = BoardOfTrustee::create($data);
@@ -43,7 +44,7 @@ class BoardOfTrusteeController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('trustees', 'public');
+            $data['image'] = $request->file('image')->store('trustees', 's3');
         }
 
         $boardOfTrustee->update($data);
