@@ -41,6 +41,11 @@ Route::get('v1/trustees',[BoardOfTrusteeController::class,'index']);
 // Route::get('v1/business',[MemberController::class,'index']);
 Route::get('v1/business',[BusinessController::class,'index']);
 
+use App\Http\Controllers\Api\V1\PublicProductController;
+// Public
+Route::get('v1/products/active', [PublicProductController::class, 'index']);
+
+
 
 
 
@@ -151,6 +156,8 @@ Route::middleware(['auth:sanctum', 'role:member|admin|super_admin'])->group(func
     // Post ==>> Products
     Route::apiResource('v1/products', ProductController::class);
 });
+
+
 
 Route::middleware(['auth:sanctum', 'role:member'])
     ->group(function () {
