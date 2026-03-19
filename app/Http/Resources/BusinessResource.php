@@ -34,7 +34,9 @@ class BusinessResource extends JsonResource
             //     ? asset('storage/' . $applicant->photo_path);
             //     // : asset('images/default-logo.png'),
 
-            'photo_url' => $this->getS3Url($this->photo_path, 120),
+            // 'photo_url' => $this->getS3Url($this->photo_path, 120),
+            'photo_url' => $this->getS3Url($this->photo_path, 60), // 1 hour for photos
+
 
 
             'industry' => $applicant?->industry,
