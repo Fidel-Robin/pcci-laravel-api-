@@ -8,6 +8,17 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class BusinessResource extends JsonResource
 {
     /**
+     * Helper to generate temporary URLs for S3/Backblaze
+     * Copied from ApplicantResource for consistency
+     */
+    private function getS3Url($path, $minutes = 30)
+    {
+        if (!$path) return null;
+        return Storage::disk('s3')->temporaryUrl($path, now()->addMinutes($minutes));
+    }
+
+
+    /**
      * Transform the resource into an array for the public landing page.
      */
     public function toArray(Request $request): array
@@ -19,9 +30,12 @@ class BusinessResource extends JsonResource
             // 'slug' => $applicant?->slug, // Useful for the "View Details" URL
 
             // This ensures the URL starts with http://127.0.0.1:8000/storage/
-            'photo_url' => $applicant?->photo_path 
-                ? asset('storage/' . $applicant->photo_path) 
-                : asset('images/default-logo.png'),
+            // 'photo_url' => $applicant?->photo_path 
+            //     ? asset('storage/' . $applicant->photo_path);
+            //     // : asset('images/default-logo.png'),
+
+            'photo_url' => $this->getS3Url($this->photo_path, 120),
+
 
             'industry' => $applicant?->industry,
             'registered_business_name' => $applicant?->registered_business_name,
