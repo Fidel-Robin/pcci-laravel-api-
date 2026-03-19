@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage; // For S3 URL generation
 
 class BusinessResource extends JsonResource
 {
@@ -35,7 +36,8 @@ class BusinessResource extends JsonResource
             //     // : asset('images/default-logo.png'),
 
             // 'photo_url' => $this->getS3Url($this->photo_path, 120),
-            'photo_url' => $this->getS3Url($this->photo_path, 60), // 1 hour for photos
+            // 'photo_url' => $this->getS3Url($this->photo_path, 60), // 1 hour for photos
+            'photo_url' => $this->getS3Url($applicant?->photo_path, 60),
 
 
 
