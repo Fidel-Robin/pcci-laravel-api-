@@ -86,7 +86,8 @@ class MemberController extends Controller
             'membership_type_id' => $payment->membership_type_id,
             'induction_date' => $inductionDate,
             'membership_end_date' => $membershipEndDate,
-            'status' => $inductionDate ? 'active' : 'pending',
+            // 'status' => $inductionDate ? 'active' : 'pending',
+            'status' => 'active', // Set to active immediately since payment is confirmed
         ]);
 
 
