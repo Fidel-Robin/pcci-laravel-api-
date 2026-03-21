@@ -28,18 +28,7 @@ class BusinessResource extends JsonResource
         $applicant = $this->applicant;
 
         return [
-            // 'slug' => $applicant?->slug, // Useful for the "View Details" URL
-
-            // This ensures the URL starts with http://127.0.0.1:8000/storage/
-            // 'photo_url' => $applicant?->photo_path 
-            //     ? asset('storage/' . $applicant->photo_path);
-            //     // : asset('images/default-logo.png'),
-
-            // 'photo_url' => $this->getS3Url($this->photo_path, 120),
-            // 'photo_url' => $this->getS3Url($this->photo_path, 60), // 1 hour for photos
             'photo_url' => $this->getS3Url($applicant?->photo_path, 60),
-
-
 
             'industry' => $applicant?->industry,
             'registered_business_name' => $applicant?->registered_business_name,
