@@ -126,6 +126,9 @@ Route::middleware(['auth:sanctum', 'role:super_admin|treasurer'])->group(functio
     
     // READ/WRITE PAYMENTS (Super Admin & Treasurer)
     Route::apiResource('v1/payments', PaymentController::class);
+
+    //Get ==>> Membership Types (Super Admin & Treasurer)
+    Route::get('v1/membership-types', [MembershipTypeController::class, 'index']); 
 });
 
 
