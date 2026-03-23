@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ApplicantApproved extends Mailable
+class ApplicantApprovedPaid extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,6 +20,6 @@ class ApplicantApproved extends Mailable
     public function build()
     {
         return $this->subject('Your Application has been Approved')
-                    ->view('emails.applicant_approved');
+                    ->view('emails.applicant_approved_paid');
     }
 }

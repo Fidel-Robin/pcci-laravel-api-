@@ -8,11 +8,11 @@ Route::get('/', function () {
 
 
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ApplicantApproved;
+use App\Mail\ApplicantApprovedPaid;
 
 Route::get('/test-email', function() {
     $dummy = (object) ['first_name' => 'Test', 'email' => 'fidelishmaelrobin12@gmail.com'];
-    Mail::to($dummy->email)->send(new \App\Mail\ApplicantApproved($dummy));
+    Mail::to($dummy->email)->send(new \App\Mail\ApplicantApprovedPaid($dummy));
     return 'Email sent!';
 });
 

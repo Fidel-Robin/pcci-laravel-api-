@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Applicant;
-use App\Mail\ApplicantApproved;
+use App\Mail\ApplicantApprovedPaid;
 use Illuminate\Support\Facades\Mail;
 
 class ApplicantObserver
@@ -13,10 +13,10 @@ class ApplicantObserver
      */
     public function updated(Applicant $applicant)
     {
-        // Check if 'status' changed to 'approved'
-        if ($applicant->isDirty('status') && $applicant->status === 'approved') {
+        // Check if 'status' changed to 'paid'
+        if ($applicant->isDirty('status') && $applicant->status === 'paid') {
             // Send email to applicant
-            Mail::to($applicant->email)->send(new ApplicantApproved($applicant));
+            Mail::to($applicant->email)->send(new ApplicantApprovedPaid($applicant));
         }
     }
 }
