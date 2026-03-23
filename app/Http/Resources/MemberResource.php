@@ -16,7 +16,14 @@ class MemberResource extends JsonResource
             // 👇 reuse applicant resource
             'applicant' => new ApplicantResource($this->whenLoaded('applicant')),
 
-            'membership_type_id' => $this->membership_type_id,
+            // 'membership_type_id' => $this->membership_type_id,
+
+            MemberResource::mergeWhen($this->membershipType, [
+                'membership_type' => [
+                    'id' => $this->membershipType?->id,
+                    'name' => $this->membershipType?->name,
+                ],
+            ]),
             'induction_date' => $this->induction_date,
             'membership_end_date' => $this->membership_end_date,
             'status' => $this->status,
