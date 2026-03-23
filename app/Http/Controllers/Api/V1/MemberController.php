@@ -19,8 +19,10 @@ class MemberController extends Controller
 {
     public function index()
     {
+        // return MemberResource::collection(
+        //     Member::latest()->paginate(10)
         return MemberResource::collection(
-            Member::latest()->paginate(10)
+                Member::latest()->get()
         );
     }
 
