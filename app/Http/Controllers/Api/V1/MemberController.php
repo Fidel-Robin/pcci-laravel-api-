@@ -17,12 +17,21 @@ use Illuminate\Support\Str;
 
 class MemberController extends Controller
 {
+    // public function index()
+    // {
+    //     // return MemberResource::collection(
+    //     //     Member::latest()->paginate(10)
+    //     return MemberResource::collection(
+    //             Member::latest()->get()
+    //     );
+    // }
+
     public function index()
     {
-        // return MemberResource::collection(
-        //     Member::latest()->paginate(10)
         return MemberResource::collection(
-                Member::latest()->get()
+            Member::with('applicant') // ✅ THIS IS THE FIX
+                ->latest()
+                ->get()
         );
     }
 
