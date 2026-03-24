@@ -17,14 +17,36 @@ class UserMemberSeeder extends Seeder
 
         $credentials = [];
 
-        foreach ($members as $index => $member) {
+        // foreach ($members as $index => $member) {
+
+        //     $email = $member->applicant->email ?? 'user' . $member->id . '@example.com';
+
+        //     // First record uses password123, others random
+        //     $password = $index === 0 ? 'password123' : Str::random(11);
+
+        //     // Create user
+        //     $user = User::create([
+        //         'name' => $member->applicant->registered_business_name,
+        //         'email' => $email,
+        //         'password' => Hash::make($password),
+        //     ]);
+
+        //     $user->assignRole('member');
+
+        //     $member->update([
+        //         'user_id' => $user->id,
+        //     ]);
+
+        //     $credentials[] = "Business: {$user->name} | Email: {$email} | Password: {$password}";
+        // }
+
+        foreach ($members as $member) {
 
             $email = $member->applicant->email ?? 'user' . $member->id . '@example.com';
 
-            // First record uses password123, others random
-            $password = $index === 0 ? 'password123' : Str::random(11);
+            // Generate consistent password per user
+            $password = substr(md5($email), 0, 10);
 
-            // Create user
             $user = User::create([
                 'name' => $member->applicant->registered_business_name,
                 'email' => $email,
