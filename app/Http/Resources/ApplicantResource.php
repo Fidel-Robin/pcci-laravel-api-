@@ -37,7 +37,7 @@ class ApplicantResource extends JsonResource
                 'date_submitted'  => $this->date_submitted?->toDateString(),
                 'status'          => $this->status,
                 'date_approved'   => $this->date_approved?->toDateString(),
-                'membership_type' => $this->membership_type,
+                // 'membership_type' => $this->membership_type,
 
                 // === PHOTO & DOCUMENTS (Backblaze Temporary URLs) ===
                 'photo_url'            => $this->getS3Url($this->photo_path, 60), // 1 hour for photos
@@ -115,7 +115,7 @@ class ApplicantResource extends JsonResource
                 'date_submitted'  => $this->date_submitted?->toDateString(),
                 'status'          => $this->status,
                 'date_approved'   => $this->date_approved?->toDateString(),
-                'membership_type' => $this->membership_type,
+                // 'membership_type' => $this->membership_type,
 
                 'basic_profile' => [
                     'registered_business_name' => $this->registered_business_name,
@@ -138,7 +138,7 @@ class ApplicantResource extends JsonResource
                 'date_submitted'  => $this->date_submitted?->toDateString(),
                 'status'          => $this->status,
                 'date_approved'   => $this->date_approved?->toDateString(),
-                'membership_type' => $this->membership_type,
+                // 'membership_type' => $this->membership_type,
 
                 // === Backblaze Temporary URLs ===
                 'photo_url'         => $this->getS3Url($this->photo_path, 60),
