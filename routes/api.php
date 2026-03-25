@@ -51,6 +51,34 @@ Route::get('v1/products/active', [PublicProductController::class, 'index']);
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema; // Important: Add this import
+ // DEV-ONLY: Refresh DB (Super Admin Only)
+    Route::get('/refresh-db', function () {
+        try {
+            \Log::info('Refresh DB started');
+
+            \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+
+            \Artisan::call('migrate:fresh', [
+                '--force' => true,
+                '--seed' => true
+            ]);
+
+            \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+
+            return response()->json([
+                'status' => 'success',
+                'output' => \Artisan::output()
+            ]);
+
+        } catch (\Throwable $e) {
+            \Log::error('Refresh DB failed: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+    });
 
 
 
@@ -123,35 +151,6 @@ Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
     //Delete ==>> Users 
     Route::delete('v1/trustees/{boardOfTrustee}',[BoardOfTrusteeController::class,'destroy']);
     Route::delete('v1/positions/{boardPosition}',[BoardPositionController::class,'destroy']);
-
-     // DEV-ONLY: Refresh DB (Super Admin Only)
-    Route::get('/refresh-db', function () {
-        try {
-            \Log::info('Refresh DB started');
-
-            \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
-
-            \Artisan::call('migrate:fresh', [
-                '--force' => true,
-                '--seed' => true
-            ]);
-
-            \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
-
-            return response()->json([
-                'status' => 'success',
-                'output' => \Artisan::output()
-            ]);
-
-        } catch (\Throwable $e) {
-            \Log::error('Refresh DB failed: ' . $e->getMessage());
-
-            return response()->json([
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ], 500);
-        }
-    });
 });
 
 //SUPER ADMIN and MEMBER
