@@ -123,14 +123,8 @@ Route::middleware(['auth:sanctum', 'role:super_admin'])->group(function () {
     //Delete ==>> Users 
     Route::delete('v1/trustees/{boardOfTrustee}',[BoardOfTrusteeController::class,'destroy']);
     Route::delete('v1/positions/{boardPosition}',[BoardPositionController::class,'destroy']);
-});
 
-//SUPER ADMIN and MEMBER
-Route::middleware(['auth:sanctum', 'role:member|admin|super_admin'])->group(function () {
-    // Post ==>> Products
-    Route::apiResource('v1/products', ProductController::class);
-
-    // DEV-ONLY: Refresh DB (Super Admin Only)
+     // DEV-ONLY: Refresh DB (Super Admin Only)
     Route::get('/refresh-db', function () {
         try {
             \Log::info('Refresh DB started');
@@ -158,6 +152,14 @@ Route::middleware(['auth:sanctum', 'role:member|admin|super_admin'])->group(func
             ], 500);
         }
     });
+});
+
+//SUPER ADMIN and MEMBER
+Route::middleware(['auth:sanctum', 'role:member|admin|super_admin'])->group(function () {
+    // Post ==>> Products
+    Route::apiResource('v1/products', ProductController::class);
+
+   
 
 });
 
