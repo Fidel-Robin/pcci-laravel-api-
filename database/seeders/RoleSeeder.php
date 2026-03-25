@@ -14,24 +14,23 @@ class RoleSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Permissions
-        $permissions = ['view applicants','create applicants','edit applicants','delete applicants'];
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(
-                ['name' => $permission],
-                ['guard_name' => 'sanctum'] // ✅ assign guard
-            );
-        }
+        Permission::firstOrCreate(['name' => 'view applicants']);
+        Permission::firstOrCreate(['name' => 'create applicants']);
+        Permission::firstOrCreate(['name' => 'edit applicants']);
+        Permission::firstOrCreate(['name' => 'delete applicants']);
 
         // Roles
-        $superAdmin = Role::firstOrCreate(
-            ['name' => 'super_admin'],
-            ['guard_name' => 'sanctum'] // ✅ assign guard
-        );
-        $superAdmin->givePermissionTo($permissions);
+        $superAdmin = Role::firstOrCreate(['name' => 'super_admin']);
+        $superAdmin->givePermissionTo([
+            'view applicants',
+            'create applicants',
+            'edit applicants',
+            'delete applicants'
+        ]);
 
-        Role::firstOrCreate(['name' => 'admin'], ['guard_name' => 'sanctum']);
-        Role::firstOrCreate(['name' => 'treasurer'], ['guard_name' => 'sanctum']);
-        Role::firstOrCreate(['name' => 'data_encoder'], ['guard_name' => 'sanctum']);
-        Role::firstOrCreate(['name' => 'member'], ['guard_name' => 'sanctum']);
+        Role::firstOrCreate(['name' => 'admin']);
+        Role::firstOrCreate(['name' => 'treasurer']);
+        Role::firstOrCreate(['name' => 'data_encoder']);
+        Role::firstOrCreate(['name' => 'member']);
     }
 }
