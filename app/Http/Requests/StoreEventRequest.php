@@ -29,7 +29,7 @@ class StoreEventRequest extends FormRequest
             'time' => 'required',
             'location' => 'required|string|max:255',
             'description' => 'required|string',
-            'status' => 'required|in:pending,ongoing,completed'
+            'status' => 'required|in:upcoming,ongoing,completed,cancelled'
         ];
     }
 }
