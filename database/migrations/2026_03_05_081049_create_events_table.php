@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('location');
             $table->text('description');
 
-            $table->enum('status', ['pending', 'ongoing', 'completed'])
+            $table->enum('status', ['pending', 'ongoing', 'completed', 'upcoming', 'cancelled'  ])
                 ->default('pending');
 
             $table->timestamps();
