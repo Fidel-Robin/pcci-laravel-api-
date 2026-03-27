@@ -47,11 +47,9 @@ Route::get('v1/products/active', [PublicProductController::class, 'index']);
 
 
 
-
-
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema; // Important: Add this import
- // DEV-ONLY: Refresh DB (Super Admin Only)
+ 
     Route::get('/refresh-db', function () {
         try {
             \Log::info('Refresh DB started');
@@ -199,6 +197,7 @@ Route::post('v1/upload', [FileUploadController::class, 'upload']);
 
 
 
+//
 Route::get('/v1/notifications', [ExpiringMembershipNotificationController::class, 'index']);
 Route::patch('/v1/notifications/{id}/read', [ExpiringMembershipNotificationController::class, 'markAsRead']);
 

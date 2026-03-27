@@ -8,6 +8,7 @@ use App\Models\Activity;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Http\Resources\ActivityResource;
+use Illuminate\Http\Request;
 
 
 class ActivityController extends Controller
@@ -18,9 +19,10 @@ class ActivityController extends Controller
     {
         $data = $request->validated();
 
+        // 🚀 SWITCHING TO S3 (BACKBLAZE)
         if ($request->hasFile('image')) {
             $data['image_path'] =
-                $request->file('image')->store('activities', 'public');
+                $request->file('image')->store('activities', 's3');
         }
 
         $activity = Activity::create($data);
@@ -41,13 +43,14 @@ class ActivityController extends Controller
 
         if ($request->hasFile('image')) {
 
-            // delete old image (important)
+            // ✅ delete old image from S3
             if ($activity->image_path) {
-                Storage::disk('public')->delete($activity->image_path);
+                Storage::disk('s3')->delete($activity->image_path);
             }
 
+            // ✅ store new image in S3
             $data['image_path'] =
-                $request->file('image')->store('activities', 'public');
+                $request->file('image')->store('activities', 's3');
         }
 
         $activity->update($data);
